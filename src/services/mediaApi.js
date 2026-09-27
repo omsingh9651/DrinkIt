@@ -1,4 +1,6 @@
-const API_BASE = '/api/admin/media';
+import { getApiUrl } from './apiConfig';
+
+const API_BASE = getApiUrl('/api/admin/media');
 
 /**
  * Fetch all media assets

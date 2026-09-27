@@ -1,4 +1,6 @@
-const API_BASE = '/api/admin/customers';
+import { getApiUrl } from './apiConfig';
+
+const API_BASE = getApiUrl('/api/admin/customers');
 
 /**
  * Fetch customers list with search, status filters, spend aggregations and metrics

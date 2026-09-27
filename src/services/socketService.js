@@ -1,4 +1,5 @@
 import { io } from 'socket.io-client';
+import { SOCKET_URL } from './apiConfig';
 
 let socketInstance = null;
 
@@ -16,7 +17,8 @@ export const socketService = {
         );
       };
 
-      socketInstance = io('/', {
+      const targetUrl = SOCKET_URL || '/';
+      socketInstance = io(targetUrl, {
         transports: ['websocket', 'polling'],
         auth: (cb) => {
           cb({

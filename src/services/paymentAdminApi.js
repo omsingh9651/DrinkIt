@@ -1,4 +1,6 @@
-const API_BASE = '/api/admin/payments';
+import { getApiUrl } from './apiConfig';
+
+const API_BASE = getApiUrl('/api/admin/payments');
 
 /**
  * Fetch all payments with filtering and financial metrics

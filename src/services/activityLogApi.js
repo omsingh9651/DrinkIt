@@ -1,4 +1,6 @@
-const API_BASE = '/api/admin/activity-logs';
+import { getApiUrl } from './apiConfig';
+
+const API_BASE = getApiUrl('/api/admin/activity-logs');
 
 /**
  * Fetch centralized activity logs with search, module filter and pagination

@@ -5,13 +5,19 @@
  * Zero credentials, authkeys, or OTP secrets are handled in the browser.
  */
 
+import { getApiUrl } from './apiConfig';
+
 /**
  * Safely parse JSON from fetch response with friendly error messages
  */
 async function safeFetchJson(url, options = {}) {
   let res;
   try {
-    res = await fetch(url, options);
+    const fullUrl = url.startsWith('http://') || url.startsWith('https://') ? url : getApiUrl(url);
+    res = await fetch(fullUrl, {
+      ...options,
+      credentials: options.credentials || 'include',
+    });
   } catch (netErr) {
     throw new Error(
       `Cannot connect to DrinkIt backend server. Please verify the server is running on port 5001 (${netErr.message}).`,
@@ -65,7 +71,7 @@ async function safeFetchJson(url, options = {}) {
  */
 export async function checkAuthStatus() {
   try {
-    const res = await fetch('/api/auth/status');
+    const res = await fetch(getApiUrl('/api/auth/status'));
     if (!res.ok) return { isConfigured: false };
     const rawText = await res.text();
     const data = JSON.parse(rawText);

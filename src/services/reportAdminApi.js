@@ -1,4 +1,6 @@
-const API_BASE = '/api/admin/reports';
+import { getApiUrl } from './apiConfig';
+
+const API_BASE = getApiUrl('/api/admin/reports');
 
 /**
  * Fetch calculated sales analytics for given date range

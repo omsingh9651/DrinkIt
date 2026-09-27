@@ -1,5 +1,7 @@
-const API_BASE = '/api/admin/brands';
-const PUBLIC_API = '/api/brands';
+import { getApiUrl } from './apiConfig';
+
+const API_BASE = getApiUrl('/api/admin/brands');
+const PUBLIC_API = getApiUrl('/api/brands');
 
 /**
  * Fetch all brands for public store

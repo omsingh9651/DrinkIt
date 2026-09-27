@@ -1,8 +1,4 @@
-/**
- * DrinkIt Order API Service
- *
- * Handles customer order placement and retrieval, and admin order management.
- */
+import { getApiUrl } from './apiConfig';
 
 function getHeaders(customerPhone) {
   const headers = {
@@ -51,7 +47,7 @@ async function parseResponse(res, context = 'Order API') {
  * Customer: Place a new order
  */
 export async function createOrder(orderPayload, customerPhone) {
-  const res = await fetch('/api/orders', {
+  const res = await fetch(getApiUrl('/api/orders'), {
     method: 'POST',
     headers: getHeaders(customerPhone),
     credentials: 'include',
@@ -65,7 +61,7 @@ export async function createOrder(orderPayload, customerPhone) {
  * Customer: Fetch order history for the logged-in customer
  */
 export async function getMyOrders(customerPhone) {
-  const res = await fetch('/api/orders/my-orders', {
+  const res = await fetch(getApiUrl('/api/orders/my-orders'), {
     method: 'GET',
     headers: getHeaders(customerPhone),
     credentials: 'include',
@@ -79,7 +75,7 @@ export async function getMyOrders(customerPhone) {
  * Customer / Admin: Fetch single order by ID
  */
 export async function getOrderById(orderId, customerPhone) {
-  const res = await fetch(`/api/orders/${orderId}`, {
+  const res = await fetch(getApiUrl(`/api/orders/${orderId}`), {
     method: 'GET',
     headers: getHeaders(customerPhone),
     credentials: 'include',
@@ -93,7 +89,7 @@ export async function getOrderById(orderId, customerPhone) {
  * Customer: Cancel pending/confirmed order
  */
 export async function cancelCustomerOrder(orderId, customerPhone, reason = '') {
-  const res = await fetch(`/api/orders/${orderId}/cancel`, {
+  const res = await fetch(getApiUrl(`/api/orders/${orderId}/cancel`), {
     method: 'PATCH',
     headers: getHeaders(customerPhone),
     credentials: 'include',
@@ -125,7 +121,7 @@ export async function fetchAdminOrders({
   if (page) params.set('page', String(page));
   if (limit) params.set('limit', String(limit));
 
-  const res = await fetch(`/api/admin/orders?${params.toString()}`, {
+  const res = await fetch(getApiUrl(`/api/admin/orders?${params.toString()}`), {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -148,7 +144,7 @@ export async function fetchAdminOrders({
  * Admin: Fetch full order details
  */
 export async function fetchAdminOrderById(orderId) {
-  const res = await fetch(`/api/admin/orders/${orderId}`, {
+  const res = await fetch(getApiUrl(`/api/admin/orders/${orderId}`), {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -164,7 +160,7 @@ export async function fetchAdminOrderById(orderId) {
  * Admin: Update order status & payment status
  */
 export async function updateAdminOrderStatus(orderId, { orderStatus, paymentStatus, note }) {
-  const res = await fetch(`/api/admin/orders/${orderId}/status`, {
+  const res = await fetch(getApiUrl(`/api/admin/orders/${orderId}/status`), {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -180,7 +176,7 @@ export async function updateAdminOrderStatus(orderId, { orderStatus, paymentStat
  * Fetch list of DrinkIt pickup store hubs
  */
 export async function fetchDeliveryStores() {
-  const res = await fetch('/api/delivery/stores', {
+  const res = await fetch(getApiUrl('/api/delivery/stores'), {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   });
@@ -192,7 +188,7 @@ export async function fetchDeliveryStores() {
  * Fetch list of delivery partners
  */
 export async function fetchDeliveryPartners() {
-  const res = await fetch('/api/delivery/partners', {
+  const res = await fetch(getApiUrl('/api/delivery/partners'), {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -205,7 +201,7 @@ export async function fetchDeliveryPartners() {
  * Assign delivery partner and/or store hub to order
  */
 export async function assignDeliveryPartnerAndStore(orderId, { partnerId, storeId }) {
-  const res = await fetch(`/api/delivery/orders/${orderId}/assign`, {
+  const res = await fetch(getApiUrl(`/api/delivery/orders/${orderId}/assign`), {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -219,7 +215,7 @@ export async function assignDeliveryPartnerAndStore(orderId, { partnerId, storeI
  * Reset tracking coordinates back to store pickup
  */
 export async function resetDeliveryLocation(orderId) {
-  const res = await fetch(`/api/delivery/orders/${orderId}/reset`, {
+  const res = await fetch(getApiUrl(`/api/delivery/orders/${orderId}/reset`), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',

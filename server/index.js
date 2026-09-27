@@ -41,25 +41,46 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+// CORS origin configuration supporting local dev and production frontend (CLIENT_URL)
+const defaultOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+const allowedOrigins = [...defaultOrigins];
+
+if (process.env.CLIENT_URL) {
+  process.env.CLIENT_URL.split(',')
+    .map((url) => url.trim())
+    .filter(Boolean)
+    .forEach((url) => {
+      const clean = url.replace(/\/+$/, '');
+      if (!allowedOrigins.includes(clean)) allowedOrigins.push(clean);
+      if (!allowedOrigins.includes(url)) allowedOrigins.push(url);
+    });
+}
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    const cleanOrigin = origin.trim().replace(/\/+$/, '');
+    const isAllowed = allowedOrigins.some((allowed) => allowed.replace(/\/+$/, '') === cleanOrigin);
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(null, false);
+    }
+  },
+  credentials: true,
+};
+
 // Create HTTP server for Express + Socket.IO
 const server = http.createServer(app);
 const io = new SocketIOServer(server, {
-  cors: {
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
-    credentials: true,
-  },
+  cors: corsOptions,
 });
 
 // Initialize real-time delivery tracking socket handlers
 setupDeliveryTrackingSocket(io);
 
-// Enable CORS for development
-app.use(
-  cors({
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
-    credentials: true,
-  })
-);
+// Enable CORS
+app.use(cors(corsOptions));
 
 // Parse JSON request bodies & cookies
 app.use(express.json());
@@ -141,8 +162,8 @@ async function startServer() {
     process.exit(1);
   }
 
-  server.listen(PORT, () => {
-    console.log(`🥃 DrinkIt Backend API & Socket.IO running on http://localhost:${PORT}`);
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`🥃 DrinkIt Backend API & Socket.IO running on http://0.0.0.0:${PORT} (port ${PORT})`);
     console.log(`🍃 Database Status: CONNECTED (Database: ${mongoose.connection.name})`);
     console.log(`🔒 MSG91 Authkey is secured on the server.`);
     console.log(`📡 MSG91 Live Status: ${isMsg91Configured() ? 'CONFIGURED (Ready for Real SMS OTP)' : 'NOT CONFIGURED'}`);

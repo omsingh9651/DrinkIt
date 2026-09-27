@@ -6,6 +6,8 @@
  * 2. Razorpay Test Mode - Secure checkout with server-side HMAC-SHA256 signature verification
  */
 
+import { getApiUrl } from './apiConfig';
+
 export const PAYMENT_METHODS = {
   COD: 'COD',
   RAZORPAY: 'RAZORPAY',
@@ -107,7 +109,7 @@ export function loadRazorpayScript() {
  * Fetch public payment configuration
  */
 export async function fetchPaymentConfig() {
-  const res = await fetch('/api/payment/config');
+  const res = await fetch(getApiUrl('/api/payment/config'));
   return parseResponse(res, 'Fetch Payment Config');
 }
 
@@ -115,7 +117,7 @@ export async function fetchPaymentConfig() {
  * Create Razorpay Order on server
  */
 export async function createRazorpayOrder(orderPayload, customerPhone) {
-  const res = await fetch('/api/payment/razorpay/create-order', {
+  const res = await fetch(getApiUrl('/api/payment/razorpay/create-order'), {
     method: 'POST',
     headers: getHeaders(customerPhone),
     credentials: 'include',
@@ -129,7 +131,7 @@ export async function createRazorpayOrder(orderPayload, customerPhone) {
  * Verify Razorpay payment signature on backend
  */
 export async function verifyRazorpayPayment(verificationPayload, customerPhone) {
-  const res = await fetch('/api/payment/razorpay/verify', {
+  const res = await fetch(getApiUrl('/api/payment/razorpay/verify'), {
     method: 'POST',
     headers: getHeaders(customerPhone),
     credentials: 'include',
@@ -143,7 +145,7 @@ export async function verifyRazorpayPayment(verificationPayload, customerPhone) 
  * Report Razorpay payment failure / cancellation to server
  */
 export async function recordPaymentFailure(failurePayload, customerPhone) {
-  const res = await fetch('/api/payment/razorpay/failed', {
+  const res = await fetch(getApiUrl('/api/payment/razorpay/failed'), {
     method: 'POST',
     headers: getHeaders(customerPhone),
     credentials: 'include',
@@ -157,7 +159,7 @@ export async function recordPaymentFailure(failurePayload, customerPhone) {
  * Offline / sandbox simulation helper
  */
 export async function simulateTestPayment(orderId, razorpayOrderId, customerPhone) {
-  const res = await fetch('/api/payment/razorpay/simulate-success', {
+  const res = await fetch(getApiUrl('/api/payment/razorpay/simulate-success'), {
     method: 'POST',
     headers: getHeaders(customerPhone),
     credentials: 'include',

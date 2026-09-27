@@ -1,5 +1,7 @@
-const API_BASE = '/api/admin/banners';
-const PUBLIC_API = '/api/banners';
+import { getApiUrl } from './apiConfig';
+
+const API_BASE = getApiUrl('/api/admin/banners');
+const PUBLIC_API = getApiUrl('/api/banners');
 
 /**
  * Fetch active promotional banners for storefront homepage

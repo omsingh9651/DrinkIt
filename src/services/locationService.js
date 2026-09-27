@@ -7,7 +7,9 @@
  * - Supports debounced search, reverse geocoding, and in-memory caching.
  */
 
-const BASE_URL = '/api/location';
+import { getApiUrl } from './apiConfig';
+
+const BASE_URL = getApiUrl('/api/location');
 
 // Client-side in-memory cache
 const localCache = new Map();

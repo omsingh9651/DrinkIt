@@ -5,6 +5,7 @@ import {
   addExternalMediaUrl,
   deleteMedia,
 } from '../../services/mediaApi';
+import { getAssetUrl } from '../../services/apiConfig';
 import styles from './AdminMedia.module.css';
 
 export default function AdminMedia() {
@@ -106,7 +107,8 @@ export default function AdminMedia() {
   const handleCopyUrl = async (url) => {
     try {
       // If it starts with /uploads, form full URL for convenience
-      const finalUrl = url.startsWith('/') ? `${window.location.origin}${url}` : url;
+      const assetUrl = getAssetUrl(url);
+      const finalUrl = assetUrl || (url.startsWith('/') ? `${window.location.origin}${url}` : url);
       await navigator.clipboard.writeText(finalUrl);
       showToast('Image URL copied to clipboard!');
     } catch {

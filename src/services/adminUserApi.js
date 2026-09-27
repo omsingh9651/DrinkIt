@@ -1,4 +1,6 @@
-const API_BASE = '/api/admin/admin-users';
+import { getApiUrl } from './apiConfig';
+
+const API_BASE = getApiUrl('/api/admin/admin-users');
 
 /**
  * Fetch all admin users

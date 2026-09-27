@@ -1,5 +1,7 @@
-const API_BASE = '/api/admin/coupons';
-const PUBLIC_API = '/api/coupons';
+import { getApiUrl } from './apiConfig';
+
+const API_BASE = getApiUrl('/api/admin/coupons');
+const PUBLIC_API = getApiUrl('/api/coupons');
 
 /**
  * Validate coupon code (Customer storefront checkout)

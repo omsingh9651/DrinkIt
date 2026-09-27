@@ -7,6 +7,8 @@
  * requiring refactoring in UI components.
  */
 
+import { getApiUrl } from './apiConfig';
+
 const STORAGE_PREFIX = 'drinkit_customer_';
 
 /**
@@ -47,7 +49,7 @@ export async function getCustomerProfile(phoneNumber) {
   const token = typeof localStorage !== 'undefined' ? localStorage.getItem('drinkit_customer_token') : null;
   if (token) {
     try {
-      const res = await fetch('/api/users/me', {
+      const res = await fetch(getApiUrl('/api/users/me'), {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -100,7 +102,7 @@ export async function saveCustomerProfile(phoneNumber, profileData) {
   const token = typeof localStorage !== 'undefined' ? localStorage.getItem('drinkit_customer_token') : null;
   if (token) {
     try {
-      await fetch('/api/users/me', {
+      await fetch(getApiUrl('/api/users/me'), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

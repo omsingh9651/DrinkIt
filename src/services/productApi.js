@@ -1,6 +1,7 @@
 import { PRODUCTS, getProductById as getLocalProductById } from '../data/products';
+import { getApiUrl } from './apiConfig';
 
-const API_BASE = '/api/products';
+const API_BASE = getApiUrl('/api/products');
 
 /**
  * Fetch all products from API with fallback to local catalog
@@ -100,7 +101,7 @@ export async function fetchProductById(id) {
  */
 export async function fetchCategories() {
   try {
-    const res = await fetch('/api/categories');
+    const res = await fetch(getApiUrl('/api/categories'));
     if (res.ok) {
       const data = await res.json();
       if (data.success && Array.isArray(data.categories)) {

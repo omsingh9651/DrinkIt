@@ -1,4 +1,6 @@
-const API_BASE = '/api/admin/inventory';
+import { getApiUrl } from './apiConfig';
+
+const API_BASE = getApiUrl('/api/admin/inventory');
 
 /**
  * Fetch inventory summary KPI metrics

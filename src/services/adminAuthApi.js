@@ -5,7 +5,9 @@
  * Sends HTTP-only credentials with all requests.
  */
 
-const ADMIN_AUTH_BASE = '/api/admin/auth';
+import { getApiUrl } from './apiConfig';
+
+const ADMIN_AUTH_BASE = getApiUrl('/api/admin/auth');
 
 /**
  * Handle API responses and uniform error parsing

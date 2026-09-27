@@ -1,5 +1,7 @@
-const API_BASE = '/api/admin/categories';
-const PUBLIC_API = '/api/categories';
+import { getApiUrl } from './apiConfig';
+
+const API_BASE = getApiUrl('/api/admin/categories');
+const PUBLIC_API = getApiUrl('/api/categories');
 
 /**
  * Fetch all categories for public customer store
