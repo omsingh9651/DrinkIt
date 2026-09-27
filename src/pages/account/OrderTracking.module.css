@@ -1,0 +1,1067 @@
+/* ===== Live Delivery Tracking Page Styles ===== */
+
+.trackingPage {
+  min-height: calc(100vh - 64px);
+  background: #090912;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Top Navigation Bar */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.75rem;
+  background: rgba(14, 14, 24, 0.96);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 20;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.topBarLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.backLink {
+  color: #f0c040;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: opacity 0.15s;
+}
+
+.backLink:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.pageTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.orderIdBadge {
+  background: rgba(240, 192, 64, 0.12);
+  border: 1px solid rgba(240, 192, 64, 0.3);
+  color: #f0c040;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-family: monospace;
+}
+
+.statusPillBadge {
+  background: rgba(240, 192, 64, 0.15);
+  color: #f0c040;
+  border: 1px solid rgba(240, 192, 64, 0.3);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Connection & Sim Badges */
+.topBarRight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.simulationNoticeBadge {
+  background: rgba(240, 192, 64, 0.15);
+  border: 1px solid rgba(240, 192, 64, 0.35);
+  color: #f0c040;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+.connectionBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.connectionDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dotLive {
+  background: #50c878;
+  box-shadow: 0 0 8px #50c878;
+  animation: pulseDot 1.8s infinite;
+}
+
+.dotPending {
+  background: #f0c040;
+  box-shadow: 0 0 8px #f0c040;
+}
+
+.dotDisconnected {
+  background: #ff5252;
+  box-shadow: 0 0 8px #ff5252;
+}
+
+.connectionLabel {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.reconnectBanner {
+  background: rgba(255, 170, 0, 0.12);
+  border-bottom: 1px solid rgba(255, 170, 0, 0.3);
+  color: #ffb834;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+/* Mobile Top Order Header (Visible only on mobile screens < 960px) */
+.mobileTopHeader {
+  display: none;
+  background: #111122;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Two-Panel Layout (Desktop: Left details, Right Map) */
+.contentLayout {
+  display: grid;
+  grid-template-columns: 460px 1fr;
+  flex: 1;
+  height: calc(100vh - 65px);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Left Panel: Tracking Card & Details */
+.leftPanelWrapper {
+  background: #10101e;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  height: 100%;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Right Panel: Map Viewport */
+.mapViewport {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  background: #0d0d1a;
+}
+
+.leafletMap {
+  width: 100%;
+  height: 100%;
+}
+
+.mapFloatingBadge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 500;
+  background: rgba(14, 14, 26, 0.94);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #f0c040;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.recenterBtn {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  z-index: 500;
+  width: 44px;
+  height: 44px;
+  background: #16162a;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s;
+}
+
+.recenterBtn:hover {
+  background: #202038;
+  border-color: #f0c040;
+  transform: scale(1.06);
+}
+
+/* Status Header */
+.statusHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(80, 200, 120, 0.12);
+  border: 1px solid rgba(80, 200, 120, 0.25);
+  color: #50c878;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+}
+
+.statusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #50c878;
+  box-shadow: 0 0 6px #50c878;
+}
+
+.lastUpdatedText {
+  font-size: 0.74rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* 5-Stage Visual Progress Timeline */
+.progressTimeline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 0.65rem 0.5rem;
+  position: relative;
+}
+
+.stageStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  position: relative;
+}
+
+.stageDot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #1e1c26;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.65rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.25rem;
+  transition: all 0.25s ease;
+}
+
+.stageText {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
+  max-width: 62px;
+  line-height: 1.2;
+}
+
+.stageComplete .stageDot {
+  background: #2ed573;
+  border-color: #2ed573;
+  color: #0b2214;
+}
+
+.stageComplete .stageText {
+  color: #2ed573;
+}
+
+.stageCurrent .stageDot {
+  background: #f0c040;
+  border-color: #f0c040;
+  color: #0a0a14;
+  box-shadow: 0 0 8px rgba(240, 192, 64, 0.5);
+}
+
+.stageCurrent .stageText {
+  color: #f0c040;
+  font-weight: 700;
+}
+
+/* Metrics Grid: ETA, Distance */
+.metricsGrid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.9rem 1.25rem;
+}
+
+.metricItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.metricLabel {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.metricValue {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.metricValue strong {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #f0c040;
+  line-height: 1;
+}
+
+.metricValue span {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.metricDivider {
+  width: 1px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Delivered Celebration Card */
+.deliveredCelebrationCard {
+  background: rgba(46, 213, 115, 0.12);
+  border: 1px solid rgba(46, 213, 115, 0.3);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.deliveredCelebrationEmoji {
+  font-size: 2.2rem;
+}
+
+.deliveredCelebrationCard strong {
+  color: #2ed573;
+  font-size: 1rem;
+  display: block;
+}
+
+.deliveredCelebrationCard p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  margin: 0.2rem 0 0;
+}
+
+/* Live Courier Coordinates Chip */
+.telemetryChip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #141424;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.telemetryIcon {
+  font-size: 0.9rem;
+}
+
+.telemetryChip strong {
+  color: #f0c040;
+  font-family: monospace;
+}
+
+/* Route Notice */
+.routingNotice {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.4;
+}
+
+/* Delivery Partner Profile Card */
+.partnerCard {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: #151528;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+}
+
+.partnerAvatar {
+  width: 44px;
+  height: 44px;
+  background: #20203a;
+  border: 2px solid #f0c040;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.partnerAvatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.partnerInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.partnerNameRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.partnerName {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.partnerLiveBadge {
+  background: rgba(80, 200, 120, 0.15);
+  border: 1px solid rgba(80, 200, 120, 0.4);
+  color: #50c878;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.1rem 0.4rem;
+  border-radius: 10px;
+}
+
+.partnerVehicleText {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.partnerRating {
+  font-size: 0.74rem;
+  color: #f0c040;
+  font-weight: 600;
+}
+
+.callBtn {
+  background: linear-gradient(135deg, #f0c040, #e07b39);
+  color: #0a0a12;
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 0.55rem 0.9rem;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  transition: transform 0.15s, opacity 0.15s;
+}
+
+.callBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Store Origin Card */
+.storeOriginCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: #141426;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+}
+
+.storeIcon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.storeTexts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.storeLabel {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.storeName {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #f0c040;
+}
+
+.storeAddress {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.3;
+}
+
+/* Destination Address Snapshot */
+.addressSnapshot {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: #141426;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+}
+
+.destIcon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.destTexts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.destLabel {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.destAddress {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.35;
+}
+
+/* Order Summary Dropdown */
+.itemsSummary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.summaryToggleBtn {
+  background: #141426;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.7rem 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.summaryToggleBtn:hover {
+  border-color: #f0c040;
+}
+
+.summaryToggleBtn strong {
+  color: #f0c040;
+}
+
+.summaryDropdownList {
+  background: #0d0d1a;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.summaryItemRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.summaryItemRow strong {
+  color: #f0c040;
+}
+
+/* Support Placeholder */
+.supportPlaceholder {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  padding-top: 0.25rem;
+}
+
+.supportLink {
+  color: #f0c040;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+/* Custom Marker CSS in Map */
+.markerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.storeMarkerPin {
+  background: #18182b;
+  border: 2px solid #f0c040;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  box-shadow: 0 4px 14px rgba(240, 192, 64, 0.4);
+}
+
+.homeMarkerPin {
+  background: #18182b;
+  border: 2px solid #50c878;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  box-shadow: 0 4px 14px rgba(80, 200, 120, 0.4);
+}
+
+.markerLabelText {
+  background: rgba(14, 14, 26, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  margin-top: 2px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.riderMarkerWrapper {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.riderPulse {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(240, 192, 64, 0.35);
+  animation: pulseRing 1.8s infinite;
+}
+
+.riderMarkerPin {
+  position: relative;
+  z-index: 2;
+  background: #16162a;
+  border: 2px solid #f0c040;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+  transition: transform 0.25s linear;
+}
+
+.riderLabelBadge {
+  background: rgba(14, 14, 26, 0.95);
+  border: 1px solid #f0c040;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.riderLiveDot {
+  color: #50c878;
+  font-size: 0.65rem;
+}
+
+/* Loading and Error States */
+.loadingContainer,
+.errorContainer {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  gap: 1rem;
+}
+
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #f0c040;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.backBtn {
+  background: #f0c040;
+  color: #0a0a12;
+  text-decoration: none;
+  font-weight: 700;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+/* Pre-delivery View */
+.preDeliveryContainer {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+}
+
+.preDeliveryCard {
+  background: #121222;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 520px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.25rem;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+}
+
+.preDeliveryHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.preDeliveryIcon {
+  font-size: 3rem;
+}
+
+.preDeliveryTitle {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 0;
+  color: #f0c040;
+}
+
+.preDeliveryDesc {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.timelineBox {
+  width: 100%;
+  background: #0d0d1a;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.timelineHeader {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+}
+
+.timelineList {
+  display: flex;
+  justify-content: space-between;
+}
+
+.timelineItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 1;
+}
+
+.timelineDot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #1c1c2e;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.7rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timelineLabel {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+}
+
+.timelineComplete .timelineDot {
+  background: #2ed573;
+  border-color: #2ed573;
+  color: #0b2214;
+}
+
+.timelineComplete .timelineLabel {
+  color: #2ed573;
+}
+
+.timelineCurrent .timelineDot {
+  background: #f0c040;
+  border-color: #f0c040;
+  color: #0d0d14;
+}
+
+.timelineCurrent .timelineLabel {
+  color: #f0c040;
+  font-weight: 700;
+}
+
+.preDeliveryActions {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.viewOrderBtn {
+  flex: 1;
+  background: linear-gradient(135deg, #f0c040, #e07b39);
+  color: #0d0c14;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+
+.continueShoppingBtn {
+  flex: 1;
+  background: #18182b;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+
+/* Animations */
+@keyframes pulseRing {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================
+   RESPONSIVE DESIGN (Phase 1 & 9 specifications)
+   Desktop: Left Details, Right Large Live Map
+   Mobile (<960px): Top Order Details, Middle Map, Bottom Card
+   Screens 320px - 430px: Zero horizontal scroll
+   ========================================================== */
+@media (max-width: 959px) {
+  .topBar {
+    padding: 0.75rem 1rem;
+  }
+
+  .contentLayout {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+
+  /* 1. Order details at the top on mobile */
+  .mobileTopHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    order: 1;
+  }
+
+  /* 2. Large map below order details on mobile */
+  .mapViewport {
+    order: 2;
+    height: 380px;
+    min-height: 340px;
+    width: 100%;
+  }
+
+  /* 3. Delivery information card below map on mobile */
+  .leftPanelWrapper {
+    order: 3;
+    height: auto;
+    overflow: visible;
+    border-right: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 1.25rem 1rem;
+  }
+
+  .recenterBtn {
+    bottom: 16px;
+    right: 16px;
+  }
+}
+
+@media (max-width: 430px) {
+  .pageTitle {
+    font-size: 1rem;
+  }
+
+  .topBar {
+    gap: 0.5rem;
+  }
+
+  .metricsGrid {
+    padding: 0.75rem 1rem;
+  }
+
+  .metricValue strong {
+    font-size: 1.45rem;
+  }
+
+  .stageText {
+    font-size: 0.58rem;
+    max-width: 52px;
+  }
+
+  .partnerCard {
+    padding: 0.75rem 0.85rem;
+  }
+
+  .callBtn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+  }
+}

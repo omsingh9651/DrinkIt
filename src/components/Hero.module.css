@@ -1,0 +1,322 @@
+/* ===== Hero Section ===== */
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+  padding: 5rem 4rem 4rem;
+  overflow: hidden;
+  min-height: 88vh;
+}
+
+/* Decorative blobs */
+.blobLeft {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(240, 192, 64, 0.12) 0%, transparent 70%);
+  top: -100px;
+  left: -150px;
+  pointer-events: none;
+}
+.blobRight {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(224, 123, 57, 0.1) 0%, transparent 70%);
+  bottom: -200px;
+  right: -200px;
+  pointer-events: none;
+}
+
+/* Text content */
+.content {
+  flex: 1;
+  max-width: 580px;
+  position: relative;
+  z-index: 1;
+}
+
+.badge {
+  display: inline-block;
+  background: rgba(240, 192, 64, 0.12);
+  border: 1px solid rgba(240, 192, 64, 0.3);
+  color: #f0c040;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 0.35rem 0.9rem;
+  border-radius: 100px;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-size: clamp(2.5rem, 5vw, 3.8rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  color: #fff;
+  margin: 0 0 1.25rem;
+}
+
+.brand {
+  background: linear-gradient(135deg, #f0c040, #e07b39);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.tagline {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 2.5rem;
+  max-width: 480px;
+}
+
+/* CTA buttons */
+.actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.ctaPrimary {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #f0c040, #e07b39);
+  color: #0a0a14;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.8rem 2rem;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(240, 192, 64, 0.25);
+}
+.ctaPrimary:hover {
+  opacity: 0.88;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(240, 192, 64, 0.35);
+}
+
+.ctaSecondary {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.8rem 2rem;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+}
+.ctaSecondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Stats */
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.stat strong {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f0c040;
+}
+.stat span {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Hero visual */
+.visual {
+  position: relative;
+  flex: 0 0 auto;
+  width: 300px;
+}
+
+.glassCard {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 3rem 2rem;
+  text-align: center;
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.glassTop {
+  font-size: 5rem;
+  line-height: 1;
+}
+
+.glassLabel {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
+.glassRating {
+  color: #f0c040;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+}
+
+/* Floating tags */
+.floatingTag,
+.floatingTag2 {
+  position: absolute;
+  background: rgba(15, 15, 30, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  color: #fff;
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+  animation: float 3s ease-in-out infinite;
+}
+.floatingTag {
+  top: -20px;
+  right: -40px;
+}
+.floatingTag2 {
+  bottom: -20px;
+  left: -50px;
+  animation-delay: 1.5s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .hero {
+    flex-direction: column;
+    padding: 3.5rem 1.5rem 2.5rem;
+    text-align: center;
+    min-height: auto;
+    gap: 2.5rem;
+  }
+  .content {
+    max-width: 100%;
+  }
+  .tagline {
+    max-width: 100%;
+  }
+  .actions {
+    justify-content: center;
+  }
+  .stats {
+    justify-content: center;
+  }
+  .visual {
+    width: 220px;
+  }
+  .floatingTag {
+    right: -15px;
+  }
+  .floatingTag2 {
+    left: -15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 2.25rem 1rem 2rem;
+  }
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .title {
+    font-size: clamp(1.85rem, 8vw, 2.4rem);
+    letter-spacing: -0.5px;
+    margin-bottom: 1rem;
+  }
+  .tagline {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 1.75rem;
+  }
+  .actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+  .ctaPrimary,
+  .ctaSecondary {
+    width: 100%;
+    justify-content: center;
+    padding: 0.8rem 1.25rem;
+    font-size: 0.95rem;
+  }
+  .stats {
+    gap: 0.65rem;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    width: 100%;
+  }
+  .stat strong {
+    font-size: 1.25rem;
+  }
+  .stat span {
+    font-size: 0.7rem;
+  }
+  .divider {
+    height: 28px;
+  }
+  .visual {
+    width: 190px;
+    max-width: 100%;
+  }
+  .glassCard {
+    padding: 2rem 1.25rem;
+  }
+  .glassTop {
+    font-size: 3.8rem;
+  }
+  .floatingTag {
+    right: -8px;
+    font-size: 0.75rem;
+    padding: 0.35rem 0.7rem;
+  }
+  .floatingTag2 {
+    left: -8px;
+    font-size: 0.75rem;
+    padding: 0.35rem 0.7rem;
+  }
+}
+

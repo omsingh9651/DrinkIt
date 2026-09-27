@@ -1,0 +1,551 @@
+/* ===== Navbar ===== */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 64px;
+  background: rgba(10, 10, 20, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* Brand Logo */
+.logo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.logo span {
+  background: linear-gradient(135deg, #f0c040, #e07b39);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Left section container for logo & location */
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Location Selector Button (Blinkit style) */
+.locationSelectorBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.35rem 0.7rem;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  max-width: 220px;
+}
+
+.locationSelectorBtn:hover {
+  background: rgba(240, 192, 64, 0.1);
+  border-color: rgba(240, 192, 64, 0.35);
+}
+
+.locationPinIcon {
+  font-size: 1.05rem;
+  color: #f0c040;
+  flex-shrink: 0;
+}
+
+.locationTextWrapper {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  line-height: 1.2;
+}
+
+.locationPrimary {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+.locationSecondary {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.55);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.locationArrow {
+  font-size: 0.55rem;
+  color: #f0c040;
+}
+
+/* Nav links list */
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navLink {
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  font-size: 0.95rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+.navLink:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.navLinkActive {
+  color: #f0c040 !important;
+  background: rgba(240, 192, 64, 0.1) !important;
+  font-weight: 600;
+}
+
+/* Cart icon */
+.cartIcon {
+  position: relative;
+  font-size: 1.25rem;
+  text-decoration: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.cartIcon:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.cartIconActive {
+  background: rgba(240, 192, 64, 0.12) !important;
+}
+
+
+.cartBadge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #e07b39;
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Login button */
+.loginBtn {
+  background: linear-gradient(135deg, #f0c040, #e07b39);
+  color: #0a0a14;
+  border: none;
+  border-radius: 8px;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.loginBtn:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+/* User logged-in profile pill */
+.authItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.accountTriggerBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(240, 192, 64, 0.3);
+  padding: 0.35rem 0.85rem 0.35rem 0.65rem;
+  border-radius: 100px;
+  cursor: pointer;
+  color: #fff;
+  transition: all 0.2s ease;
+}
+
+.accountTriggerBtn:hover {
+  background: rgba(240, 192, 64, 0.12);
+  border-color: #f0c040;
+}
+
+.userAvatarMini {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #252130;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  border: 1px solid rgba(240, 192, 64, 0.4);
+}
+
+.userNameLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #f0c040;
+  max-width: 110px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chevron {
+  font-size: 0.7rem;
+  color: #8c8594;
+  transition: transform 0.2s;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 230px;
+  background: #14131c;
+  border: 1px solid rgba(229, 168, 75, 0.25);
+  border-radius: 12px;
+  padding: 0.5rem;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  animation: fadeInDown 0.18s ease;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownHeader {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 0.3rem;
+}
+
+.dropdownUserTitle {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdownUserSub {
+  font-size: 0.75rem;
+  color: #8c8594;
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 6px;
+  color: #d1cbd6;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+
+.dropdownItem:hover {
+  background: rgba(229, 168, 75, 0.12);
+  color: #e5a84b;
+}
+
+.dropdownDivider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin: 0.3rem 0;
+}
+
+.dropdownLogoutBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 6px;
+  background: none;
+  border: none;
+  color: #ff858d;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background 0.15s;
+}
+
+.dropdownLogoutBtn:hover {
+  background: rgba(220, 53, 69, 0.15);
+}
+
+/* Hamburger button — hidden on desktop */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.bar,
+.barOpen {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+.hamburger .barOpen:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger .barOpen:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger .barOpen:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+
+.backdrop {
+  display: none;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 1.25rem;
+    height: 60px;
+  }
+
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 150;
+    animation: fadeIn 0.2s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .hamburger {
+    display: flex;
+    z-index: 200;
+  }
+
+  .navLinks {
+    position: fixed;
+    inset: 0 0 0 15%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    padding: 5rem 1.5rem 2.5rem;
+    background: rgba(12, 12, 22, 0.98);
+    backdrop-filter: blur(20px);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 180;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.7);
+  }
+
+  .navOpen {
+    transform: translateX(0);
+  }
+
+  .navLink {
+    font-size: 1.1rem;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .cartIcon {
+    font-size: 1.25rem;
+    padding: 0.5rem 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .authItem {
+    width: 100%;
+    margin-top: 0.5rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .accountTriggerBtn {
+    width: 100%;
+    justify-content: space-between;
+    padding: 0.5rem 0.85rem;
+  }
+
+  .dropdownMenu {
+    position: static;
+    width: 100%;
+    max-width: 100%;
+    box-shadow: none;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(229, 168, 75, 0.2);
+    margin-top: 0.5rem;
+    animation: none;
+  }
+
+  .loginBtn {
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+
+  .leftSection {
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .locationSelectorBtn {
+    max-width: 165px;
+    padding: 0.25rem 0.5rem;
+    gap: 0.35rem;
+  }
+
+  .locationPrimary {
+    max-width: 105px;
+    font-size: 0.76rem;
+  }
+
+  .locationSecondary {
+    max-width: 105px;
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 0.85rem;
+    height: 56px;
+  }
+
+  .logo {
+    font-size: 1.15rem;
+  }
+
+  .leftSection {
+    gap: 0.5rem;
+  }
+
+  .locationSelectorBtn {
+    max-width: 130px;
+    padding: 0.2rem 0.4rem;
+    gap: 0.3rem;
+  }
+
+  .locationPinIcon {
+    font-size: 0.95rem;
+  }
+
+  .locationPrimary {
+    max-width: 80px;
+    font-size: 0.72rem;
+  }
+
+  .locationSecondary {
+    max-width: 80px;
+    font-size: 0.62rem;
+  }
+
+  .navLinks {
+    inset: 0 0 0 0;
+    padding: 4.5rem 1.25rem 2rem;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .navbar {
+    padding: 0 0.5rem;
+  }
+
+  .logo {
+    font-size: 1.05rem;
+  }
+
+  .locationSelectorBtn {
+    max-width: 110px;
+    padding: 0.2rem 0.35rem;
+  }
+
+  .locationPrimary {
+    max-width: 65px;
+    font-size: 0.68rem;
+  }
+
+  .locationSecondary {
+    max-width: 65px;
+    font-size: 0.58rem;
+  }
+}
+
+

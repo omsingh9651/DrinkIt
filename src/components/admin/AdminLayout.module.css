@@ -1,0 +1,35 @@
+.adminContainer {
+  display: flex;
+  min-height: 100vh;
+  background: #0b0a0e;
+  color: #f2ece1;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.mainWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.contentArea {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  background: radial-gradient(circle at 80% 10%, rgba(229, 168, 75, 0.03) 0%, transparent 60%);
+}
+
+@media (max-width: 768px) {
+  .contentArea {
+    padding: 1rem 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contentArea {
+    padding: 0.85rem 0.65rem;
+  }
+}

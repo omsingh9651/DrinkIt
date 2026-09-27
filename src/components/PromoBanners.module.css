@@ -1,0 +1,190 @@
+.bannerSection {
+  max-width: 1280px;
+  margin: 1.5rem auto 2.5rem;
+  padding: 0 1.25rem;
+}
+
+.carouselContainer {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(240, 192, 64, 0.2);
+  background: #151824;
+}
+
+.bannerSlide {
+  min-height: 280px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  transition: all 0.5s ease-in-out;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(13, 12, 20, 0.95) 0%,
+    rgba(13, 12, 20, 0.8) 45%,
+    rgba(13, 12, 20, 0.3) 100%
+  );
+  display: flex;
+  align-items: center;
+  padding: 2.5rem 3rem;
+}
+
+.content {
+  max-width: 620px;
+  z-index: 2;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  background: rgba(240, 192, 64, 0.15);
+  color: #f0c040;
+  border: 1px solid rgba(240, 192, 64, 0.4);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+  margin: 0 0 0.6rem;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin: 0 0 1.25rem;
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #f0c040 0%, #d4a017 100%);
+  color: #0d0c14;
+  font-weight: 700;
+  font-size: 0.92rem;
+  padding: 0.65rem 1.4rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(240, 192, 64, 0.3);
+}
+
+.ctaButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(240, 192, 64, 0.45);
+}
+
+.ctaArrow {
+  transition: transform 0.2s ease;
+}
+
+.ctaButton:hover .ctaArrow {
+  transform: translateX(4px);
+}
+
+.navButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(13, 12, 20, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.navButton:hover {
+  background: #f0c040;
+  color: #0d0c14;
+  border-color: #f0c040;
+}
+
+.prevButton {
+  left: 1rem;
+}
+
+.nextButton {
+  right: 1rem;
+}
+
+.indicators {
+  position: absolute;
+  bottom: 1rem;
+  right: 2rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 5;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.25s ease;
+}
+
+.activeDot {
+  background: #f0c040;
+  width: 26px;
+  border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+  .overlay {
+    padding: 2rem 1.5rem;
+    background: linear-gradient(
+      180deg,
+      rgba(13, 12, 20, 0.95) 0%,
+      rgba(13, 12, 20, 0.85) 100%
+    );
+  }
+
+  .title {
+    font-size: 1.4rem;
+  }
+
+  .subtitle {
+    font-size: 0.88rem;
+    margin-bottom: 1rem;
+  }
+
+  .navButton {
+    display: none;
+  }
+
+  .indicators {
+    right: 50%;
+    transform: translateX(50%);
+    bottom: 0.75rem;
+  }
+}
+

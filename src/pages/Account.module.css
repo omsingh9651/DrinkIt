@@ -1,0 +1,268 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+/* Hero Profile Banner */
+.profileHero {
+  background: linear-gradient(135deg, #1d1b26 0%, #131219 100%);
+  border: 1px solid rgba(229, 168, 75, 0.25);
+  border-radius: 16px;
+  padding: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.heroLeft {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.heroAvatar {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #231f2d;
+  border: 2px solid #e5a84b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  box-shadow: 0 0 20px rgba(229, 168, 75, 0.2);
+}
+
+.heroMeta h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 0.35rem 0;
+}
+
+.heroContactRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: #b7b0bf;
+}
+
+.verifiedPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #2ed573;
+  background: rgba(46, 213, 115, 0.12);
+  border: 1px solid rgba(46, 213, 115, 0.3);
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.heroRight {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.editProfileBtn {
+  background: rgba(229, 168, 75, 0.12);
+  border: 1px solid rgba(229, 168, 75, 0.3);
+  color: #e5a84b;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s;
+}
+
+.editProfileBtn:hover {
+  background: rgba(229, 168, 75, 0.22);
+}
+
+/* Quick Stats Bar */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.statCard {
+  background: #14131a;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.statCard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(229, 168, 75, 0.3);
+}
+
+.statIconWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.statInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.statNumber {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.statLabel {
+  font-size: 0.78rem;
+  color: #8c8594;
+}
+
+/* Section Grids */
+.sectionTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.actionCard {
+  background: #14131a;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.actionCard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(229, 168, 75, 0.3);
+}
+
+.cardTop {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.cardIcon {
+  font-size: 1.6rem;
+  padding: 0.5rem;
+  border-radius: 10px;
+  background: rgba(229, 168, 75, 0.1);
+  flex-shrink: 0;
+}
+
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 0.25rem 0;
+}
+
+.cardDesc {
+  font-size: 0.82rem;
+  color: #8c8594;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.cardLinkText {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #e5a84b;
+}
+
+/* Age compliance badge inside card */
+.complianceBadge {
+  font-size: 0.75rem;
+  color: #2ed573;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .profileHero {
+    padding: 1.25rem 1rem;
+  }
+  .heroLeft {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.85rem;
+  }
+  .heroAvatar {
+    width: 52px;
+    height: 52px;
+    font-size: 1.7rem;
+  }
+  .heroMeta h1 {
+    font-size: 1.25rem;
+  }
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  .cardsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .heroLeft {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .statsRow {
+    grid-template-columns: 1fr;
+  }
+  .actionCard {
+    padding: 1.1rem;
+  }
+}

@@ -1,0 +1,633 @@
+/* ===== Admin Delivery GPS Simulator Styles ===== */
+
+.container {
+  padding: 1.5rem 2rem;
+  color: #f5f0eb;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Simulated Warning Banner */
+.demoWarningBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: rgba(240, 192, 64, 0.1);
+  border: 1px solid rgba(240, 192, 64, 0.35);
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+}
+
+.warningIcon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.warningText strong {
+  display: block;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  color: #f0c040;
+  margin-bottom: 0.25rem;
+}
+
+.warningText p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.4;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.backLink {
+  color: rgba(240, 192, 64, 0.85);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.backLink:hover {
+  color: #f0c040;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0;
+  background: linear-gradient(135deg, #f0c040, #e07b39);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.orderSelectGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.orderSelectGroup label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.orderSelect {
+  background: #181512;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  outline: none;
+  cursor: pointer;
+  max-width: 320px;
+}
+
+.orderSelect:focus {
+  border-color: #f0c040;
+}
+
+/* Sim Grid */
+.simGrid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 960px) {
+  .simGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Map Card */
+.mapCard {
+  background: #14110e;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.simMap {
+  width: 100%;
+  height: 520px;
+  background: #110f0d;
+}
+
+.customerPreviewLink {
+  padding: 0.85rem 1.25rem;
+  background: #0f0d0b;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.openTrackBtn {
+  color: #f0c040;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: opacity 0.2s;
+}
+
+.openTrackBtn:hover {
+  opacity: 0.85;
+}
+
+/* Controls Card */
+.controlsCard {
+  background: #14110e;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.controlsTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+  color: #f5f0eb;
+}
+
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-bottom: 1.15rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.groupLabel {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.btnRow {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.startBtn {
+  flex: 1;
+  background: linear-gradient(135deg, #f0c040, #e07b39);
+  color: #0d0c14;
+  border: none;
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.startBtn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.startBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pauseBtn {
+  flex: 1;
+  background: #ffb703;
+  color: #0d0c14;
+  border: none;
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.resumeBtn {
+  flex: 1;
+  background: #50c878;
+  color: #0b2214;
+  border: none;
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.resumeBtn:hover {
+  opacity: 0.9;
+}
+
+.stopBtn {
+  background: rgba(255, 77, 79, 0.15);
+  border: 1px solid rgba(255, 77, 79, 0.3);
+  color: #ff7875;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.stopBtn:hover {
+  background: rgba(255, 77, 79, 0.25);
+  border-color: #ff4d4f;
+  color: #ff4d4f;
+}
+
+.resetBtn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.resetBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.speedSelector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.speedLabel {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-right: 0.25rem;
+}
+
+.speedBtn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.speedBtnActive {
+  background: rgba(240, 192, 64, 0.2);
+  border-color: #f0c040;
+  color: #f0c040;
+}
+
+.gpsBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.gpsBtnActive {
+  background: rgba(220, 53, 69, 0.2);
+  border-color: #dc3545;
+  color: #ff858d;
+}
+
+.gpsAccuracyText {
+  font-size: 0.76rem;
+  color: #50c878;
+  font-weight: 600;
+}
+
+/* Telemetry Box */
+.telemetryBox {
+  background: #0f0d0b;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.progressRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.progressRow strong {
+  color: #f0c040;
+}
+
+.progressBar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #f0c040, #50c878);
+  border-radius: 6px;
+  transition: width 0.3s ease;
+}
+
+.telemetryGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.telemetryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.itemLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.valText {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.3;
+}
+
+.coordText {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: #f0c040 !important;
+}
+
+/* Log Console */
+.logSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.logHeader {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+}
+
+.logConsole {
+  background: #0a0908;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 0.75rem;
+  height: 140px;
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.logEmpty {
+  color: rgba(255, 255, 255, 0.35);
+  font-style: italic;
+}
+
+.logLine {
+  color: #88c0d0;
+  line-height: 1.35;
+}
+
+/* Map Markers */
+.markerContainer {
+  background: transparent;
+  border: none;
+}
+
+.simMarkerWrapper {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.simPulse {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(240, 192, 64, 0.35);
+  animation: pulseSim 1.5s infinite;
+}
+
+@keyframes pulseSim {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.simMarkerPin {
+  position: relative;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #14110e;
+  border: 2px solid #f0c040;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.pointPin {
+  width: 32px;
+  height: 32px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: #14110e;
+  border: 2px solid #f0c040;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.pointPin span {
+  transform: rotate(45deg);
+  font-size: 1rem;
+}
+
+/* Device GPS Permission Modal */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modalCard {
+  background: #181512;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 460px;
+  padding: 1.5rem;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modalHeader h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+}
+
+.modalCloseBtn {
+  background: transparent;
+  border: none;
+  color: #8c8594;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  line-height: 1;
+}
+
+.modalCloseBtn:hover {
+  color: #fff;
+}
+
+.modalText {
+  font-size: 0.88rem;
+  color: #dedede;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.modalText code {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+  font-family: monospace;
+  color: #f0c040;
+}
+
+.modalSubText {
+  font-size: 0.8rem;
+  color: #8c8594;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.modalActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.modalCancelBtn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cfcad6;
+  padding: 0.65rem 1.15rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modalCancelBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.modalConfirmBtn {
+  background: linear-gradient(135deg, #f0c040, #e07b39);
+  border: none;
+  color: #0a0a14;
+  padding: 0.65rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.modalConfirmBtn:hover {
+  opacity: 0.92;
+}
+
+
