@@ -40,26 +40,26 @@ console.log('✓ TEST 2 Passed: Msg91Error captures statusCode 429, isRateLimit,
 
 console.log('\n--- TEST 3: In-Memory Express Rate Limiter Middleware Execution ---');
 
-function createMockReqRes(ip = '127.0.0.1') {
+function createMockReqRes(ip = '127.0.0.1', { trustProxy = false, headers = {} } = {}) {
   let statusCode = 200;
   let responseData = null;
-  const headers = {};
+  const resHeaders = {};
 
   const req = {
     ip,
-    headers: {},
+    headers: { ...headers },
     app: {
-      get: () => false,
+      get: (key) => (key === 'trust proxy' ? trustProxy : false),
     },
   };
 
   const res = {
     setHeader(k, v) {
-      headers[k] = v;
+      resHeaders[k] = v;
       return this;
     },
     getHeader(k) {
-      return headers[k];
+      return resHeaders[k];
     },
     status(code) {
       statusCode = code;
@@ -84,31 +84,52 @@ function createMockReqRes(ip = '127.0.0.1') {
   return { req, res };
 }
 
-// Perform 5 allowed requests
-for (let i = 0; i < 5; i++) {
-  const { req, res } = createMockReqRes('192.168.1.50');
-  let nextCalled = false;
-  otpSendLimiter(req, res, () => {
-    nextCalled = true;
+async function runRateLimitTests() {
+  // Perform 5 allowed requests
+  for (let i = 0; i < 5; i++) {
+    const { req, res } = createMockReqRes('192.168.1.50');
+    let nextCalled = false;
+    await otpSendLimiter(req, res, () => {
+      nextCalled = true;
+    });
+    assert.equal(nextCalled, true, `Request ${i + 1} should call next()`);
+  }
+
+  // 6th request from same IP must be blocked with HTTP 429 and exact message
+  const { req: blockedReq, res: blockedRes } = createMockReqRes('192.168.1.50');
+  let blockedNextCalled = false;
+  await otpSendLimiter(blockedReq, blockedRes, () => {
+    blockedNextCalled = true;
   });
-  assert.equal(nextCalled, true, `Request ${i + 1} should call next()`);
+
+  assert.equal(blockedNextCalled, false, '6th request must NOT call next()');
+  assert.equal(blockedRes.getStatusCode(), 429, 'Status code must be 429');
+  const body = blockedRes.getBody();
+  assert.equal(body.success, false, 'Response success must be false');
+  assert.equal(body.error, 'Too many OTP attempts. Please try again after 15 minutes.');
+  assert.equal(body.retryAfter, 900, 'retryAfter must be 900');
+
+  console.log('✓ TEST 3 Passed: In-memory rate limiter cleanly allows 5 calls and intercepts 6th with HTTP 429, retryAfter: 900, and exact error message.');
+
+  console.log('\n--- TEST 4: Render Proxy Header Handling (trust proxy: 1) ---');
+  // When behind a proxy (like Render) with X-Forwarded-For and trust proxy: 1
+  const { req: proxyReq, res: proxyRes } = createMockReqRes('203.0.113.195', {
+    trustProxy: 1,
+    headers: { 'x-forwarded-for': '203.0.113.195, 10.0.0.1' },
+  });
+
+  let proxyNextCalled = false;
+  await otpSendLimiter(proxyReq, proxyRes, () => {
+    proxyNextCalled = true;
+  });
+
+  assert.equal(proxyNextCalled, true, 'Request with X-Forwarded-For and trust proxy: 1 must pass cleanly without ERR_ERL_UNEXPECTED_X_FORWARDED_FOR');
+  console.log('✓ TEST 4 Passed: Express trust proxy: 1 cleanly handles X-Forwarded-For headers from Render reverse proxy.');
+
+  console.log('\nAll rate limiting tests passed successfully!');
 }
 
-// 6th request from same IP must be blocked with HTTP 429 and exact message
-const { req: blockedReq, res: blockedRes } = createMockReqRes('192.168.1.50');
-let blockedNextCalled = false;
-otpSendLimiter(blockedReq, blockedRes, () => {
-  blockedNextCalled = true;
+runRateLimitTests().catch((e) => {
+  console.error('Rate limit tests failed:', e);
+  process.exit(1);
 });
-
-assert.equal(blockedNextCalled, false, '6th request must NOT call next()');
-assert.equal(blockedRes.getStatusCode(), 429, 'Status code must be 429');
-const body = blockedRes.getBody();
-assert.equal(body.success, false, 'Response success must be false');
-assert.equal(body.error, 'Too many OTP attempts. Please try again after 15 minutes.');
-assert.equal(body.retryAfter, 900, 'retryAfter must be 900');
-
-console.log('✓ TEST 3 Passed: In-memory rate limiter cleanly allows 5 calls and intercepts 6th with HTTP 429, retryAfter: 900, and exact error message.');
-
-console.log('\nAll rate limiting tests passed successfully!');
-

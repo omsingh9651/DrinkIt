@@ -30,7 +30,7 @@ import adminBannerRoutes from './routes/adminBanners.js';
 import adminReportRoutes from './routes/adminReports.js';
 import adminUserRoutes from './routes/adminUsers.js';
 import adminActivityLogRoutes from './routes/adminActivityLogs.js';
-import { isMsg91Configured } from './services/msg91.js';
+import { isMsg91Configured, logMsg91Diagnostics } from './services/msg91.js';
 import { setupDeliveryTrackingSocket } from './services/deliveryTrackingService.js';
 import mongoose from 'mongoose';
 import { connectDB, isDbConnected } from './config/db.js';
@@ -40,6 +40,15 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5001;
+
+// Trust reverse proxy for Render deployment.
+// Setting trust proxy to 1 trusts the first hop (Render load balancer / edge proxy)
+// and properly resolves req.ip from X-Forwarded-For while preventing IP spoofing.
+// Fixes: ERR_ERL_UNEXPECTED_X_FORWARDED_FOR
+const trustProxyHops = process.env.TRUST_PROXY
+  ? (Number.isNaN(Number(process.env.TRUST_PROXY)) ? process.env.TRUST_PROXY : Number(process.env.TRUST_PROXY))
+  : 1;
+app.set('trust proxy', trustProxyHops);
 
 // CORS origin configuration supporting local dev and production frontend (CLIENT_URL)
 const defaultOrigins = [
@@ -174,6 +183,7 @@ async function startServer() {
     console.log(`🥃 DrinkIt Backend API & Socket.IO running on http://0.0.0.0:${PORT} (port ${PORT})`);
     console.log(`🍃 Database Status: CONNECTED (Database: ${mongoose.connection.name})`);
     console.log(`🔒 MSG91 Authkey is secured on the server.`);
+    logMsg91Diagnostics();
     console.log(`📡 MSG91 Live Status: ${isMsg91Configured() ? 'CONFIGURED (Ready for Real SMS OTP)' : 'NOT CONFIGURED'}`);
     console.log(`🗺️  Location Engine: OpenStreetMap & Photon (Zero Google Cloud Dependency)`);
     console.log(`⚡ Live Delivery Tracking: Socket.IO & OSRM Routing Active`);

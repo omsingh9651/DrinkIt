@@ -66,7 +66,7 @@ router.post('/send-otp', otpSendLimiter, async (req, res) => {
       mobile: cleanMobile,
     });
   } catch (err) {
-    console.error('Server send-otp error:', err);
+    console.error('Server send-otp error:', err.message);
     const isRateLimit =
       err.isRateLimit ||
       err.statusCode === 429 ||
@@ -80,12 +80,16 @@ router.post('/send-otp', otpSendLimiter, async (req, res) => {
       });
     }
 
-    const errorMsg = err.cause
-      ? `${err.message} (${err.cause.code || err.cause.message})`
-      : (err.message || 'Failed to send OTP. Please try again.');
+    if (err.isAuthFailure) {
+      return res.status(502).json({
+        success: false,
+        error: 'SMS service authentication error. Please verify server SMS settings or contact support.',
+      });
+    }
+
     return res.status(err.statusCode || 500).json({
       success: false,
-      error: errorMsg,
+      error: 'Failed to send OTP. Please try again later.',
     });
   }
 });
@@ -175,13 +179,17 @@ router.post('/verify-otp', otpVerifyLimiter, async (req, res) => {
       },
     });
   } catch (err) {
-    console.error('Server verify-otp error:', err);
-    const errorMsg = err.cause
-      ? `${err.message} (${err.cause.code || err.cause.message})`
-      : (err.message || 'Invalid or expired verification code.');
-    return res.status(400).json({
+    console.error('Server verify-otp error:', err.message);
+    if (err.isAuthFailure) {
+      return res.status(502).json({
+        success: false,
+        error: 'SMS service authentication error. Please contact support.',
+      });
+    }
+
+    return res.status(err.statusCode || 400).json({
       success: false,
-      error: errorMsg,
+      error: 'Invalid or expired verification code. Please check the code and try again.',
     });
   }
 });
@@ -213,7 +221,7 @@ router.post('/retry-otp', otpSendLimiter, async (req, res) => {
       message: result.message || 'OTP resent successfully.',
     });
   } catch (err) {
-    console.error('Server retry-otp error:', err);
+    console.error('Server retry-otp error:', err.message);
     const isRateLimit =
       err.isRateLimit ||
       err.statusCode === 429 ||
@@ -227,12 +235,16 @@ router.post('/retry-otp', otpSendLimiter, async (req, res) => {
       });
     }
 
-    const errorMsg = err.cause
-      ? `${err.message} (${err.cause.code || err.cause.message})`
-      : (err.message || 'Failed to resend OTP. Please try again.');
+    if (err.isAuthFailure) {
+      return res.status(502).json({
+        success: false,
+        error: 'SMS service authentication error. Please contact support.',
+      });
+    }
+
     return res.status(err.statusCode || 500).json({
       success: false,
-      error: errorMsg,
+      error: 'Failed to resend OTP. Please try again later.',
     });
   }
 });
