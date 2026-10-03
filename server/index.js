@@ -42,7 +42,11 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 // CORS origin configuration supporting local dev and production frontend (CLIENT_URL)
-const defaultOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+const defaultOrigins = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'https://drink-it-omega.vercel.app',
+];
 const allowedOrigins = [...defaultOrigins];
 
 if (process.env.CLIENT_URL) {
@@ -60,7 +64,11 @@ const corsOptions = {
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
     const cleanOrigin = origin.trim().replace(/\/+$/, '');
-    const isAllowed = allowedOrigins.some((allowed) => allowed.replace(/\/+$/, '') === cleanOrigin);
+    const isAllowed =
+      allowedOrigins.some((allowed) => allowed.replace(/\/+$/, '') === cleanOrigin) ||
+      cleanOrigin.endsWith('.vercel.app') ||
+      /^https:\/\/[a-z0-9-]+(\.vercel\.app)$/i.test(cleanOrigin);
+
     if (isAllowed) {
       callback(null, true);
     } else {

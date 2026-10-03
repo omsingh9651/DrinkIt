@@ -53,7 +53,7 @@ router.post('/send-otp', otpSendLimiter, async (req, res) => {
     if (!isMsg91Configured()) {
       return res.status(503).json({
         success: false,
-        error: 'MSG91 credentials (MSG91_AUTH_KEY and MSG91_WIDGET_ID) are not configured in server/.env.',
+        error: 'MSG91 credentials (MSG91_AUTH_KEY and MSG91_WIDGET_ID) are not configured in the server environment.',
       });
     }
 
@@ -124,7 +124,7 @@ router.post('/verify-otp', otpVerifyLimiter, async (req, res) => {
     // Issue signed customer JWT with strong 30-day session
     const customerSecret = process.env.CUSTOMER_JWT_SECRET;
     if (!customerSecret) {
-      console.error('CRITICAL: CUSTOMER_JWT_SECRET is not configured in server/.env.');
+      console.error('CRITICAL: CUSTOMER_JWT_SECRET is not configured in the server environment.');
       return res.status(500).json({
         success: false,
         error: 'Server security configuration error.',

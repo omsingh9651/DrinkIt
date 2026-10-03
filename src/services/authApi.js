@@ -20,7 +20,7 @@ async function safeFetchJson(url, options = {}) {
     });
   } catch (netErr) {
     throw new Error(
-      `Cannot connect to DrinkIt backend server. Please verify the server is running on port 5001 (${netErr.message}).`,
+      `Cannot connect to DrinkIt backend server (${netErr.message}). If deploying, verify backend is active and CORS is permitted.`,
       { cause: netErr }
     );
   }
@@ -28,13 +28,10 @@ async function safeFetchJson(url, options = {}) {
   const rawText = await res.text();
 
   if (!rawText || !rawText.trim()) {
-    if (res.status === 502) {
+    if (res.status === 502 || res.status === 504) {
       throw new Error(
-        'Cannot reach DrinkIt backend server (502 Bad Gateway). Please make sure "npm run server" is running on port 5001.'
+        'Backend server is waking up or temporarily unavailable (HTTP 502/504). Please wait a few seconds and try again.'
       );
-    }
-    if (res.status === 504) {
-      throw new Error('Backend gateway timeout (504). Please try again in a moment.');
     }
     throw new Error(`Server returned an empty response (HTTP ${res.status}).`);
   }
@@ -47,7 +44,7 @@ async function safeFetchJson(url, options = {}) {
     const cleanSnippet = rawText.slice(0, 120).replace(/<[^>]*>?/gm, '').trim();
     if (res.status === 502 || res.status === 504) {
       throw new Error(
-        'Backend connection failed (502). Please verify the DrinkIt server is running on port 5001.'
+        'Backend server is waking up or temporarily unavailable (HTTP 502/504). Please wait a few seconds and try again.'
       );
     }
     throw new Error(cleanSnippet || `Unexpected server response format (HTTP ${res.status}).`);
@@ -72,13 +69,18 @@ async function safeFetchJson(url, options = {}) {
 export async function checkAuthStatus() {
   try {
     const res = await fetch(getApiUrl('/api/auth/status'));
-    if (!res.ok) return { isConfigured: false };
+    if (!res.ok) {
+      return { isConfigured: true, reachable: false };
+    }
     const rawText = await res.text();
     const data = JSON.parse(rawText);
-    return { isConfigured: Boolean(data.isConfigured) };
+    return {
+      isConfigured: data.isConfigured !== false,
+      reachable: true,
+    };
   } catch (err) {
     console.warn('Could not connect to DrinkIt backend auth status:', err.message);
-    return { isConfigured: false, error: err.message };
+    return { isConfigured: true, reachable: false, error: err.message };
   }
 }
 

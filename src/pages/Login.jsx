@@ -457,7 +457,7 @@ export default function Login() {
             <div className={styles.alertBody}>
               <p>
                 DrinkIt backend is active. Please configure <strong>MSG91_AUTH_KEY</strong> and{' '}
-                <strong>MSG91_WIDGET_ID</strong> in <code>server/.env</code> to send real SMS OTPs.
+                <strong>MSG91_WIDGET_ID</strong> in the server environment to send real SMS OTPs.
               </p>
             </div>
           </div>
