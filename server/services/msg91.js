@@ -7,7 +7,7 @@ import '../config/env.js';
  * Never leaks credentials to the frontend.
  */
 
-const MSG91_WIDGET_BASE_URL = 'https://api.msg91.com/api/v5/widget';
+const MSG91_WIDGET_BASE_URL = 'https://control.msg91.com/api/v5/widget';
 const MSG91_CONTROL_BASE_URL = 'https://control.msg91.com/api/v5/otp';
 
 export const RATE_LIMIT_MESSAGE = 'Too many OTP attempts. Please try again after 15 minutes.';
