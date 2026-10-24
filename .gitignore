@@ -44,13 +44,13 @@ Thumbs.db
 *.sw?
 
 # Agent and internal tooling
-.agent/
-.agents/
-.gemini/
-.gsd/
-GSD-STYLE.md
-PROJECT_RULES.md
-VERSION
-adapters/
-model_capabilities.yaml
-scripts/
+/.agent/
+/.agents/
+/.gemini/
+/.gsd/
+/GSD-STYLE.md
+/PROJECT_RULES.md
+/VERSION
+/adapters/
+/model_capabilities.yaml
+/scripts/

@@ -154,7 +154,11 @@ router.post('/:orderId/cancel', requireAdminOrCustomerAuth, handleCancelOrder);
  * GET /api/orders/:orderId/track
  * Get live delivery tracking information for an order (Admin or verified owner)
  */
-router.get('/:orderId/track', requireAdminOrCustomerAuth, async (req, res) => {
+/**
+ * GET /api/orders/:orderId/track & /api/orders/:orderId/tracking
+ * Get live delivery tracking information for an order (Admin or verified owner)
+ */
+async function handleGetOrderTracking(req, res) {
   try {
     const { orderId } = req.params;
 
@@ -221,7 +225,10 @@ router.get('/:orderId/track', requireAdminOrCustomerAuth, async (req, res) => {
       error: 'Failed to retrieve live tracking data.',
     });
   }
-});
+}
+
+router.get('/:orderId/track', requireAdminOrCustomerAuth, handleGetOrderTracking);
+router.get('/:orderId/tracking', requireAdminOrCustomerAuth, handleGetOrderTracking);
 
 export default router;
 

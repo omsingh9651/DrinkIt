@@ -53,6 +53,7 @@ class OrderService {
 
     const resolvedFullName = deliveryAddress.fullName || customerName || 'DrinkIt Customer';
     deliveryAddress.fullName = resolvedFullName;
+    deliveryAddress.pinCode = deliveryAddress.pinCode || deliveryAddress.pincode;
 
     if (
       !deliveryAddress.house ||
