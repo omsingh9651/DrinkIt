@@ -66,6 +66,7 @@ export default function AdminProducts() {
   const [isModalOpen, setIsModalOpen] = useState(() => searchParams.get('action') === 'add');
   const [editingId, setEditingId] = useState(null); // null = Add, string = Edit ID
   const [deletingProduct, setDeletingProduct] = useState(null); // product object or null
+  const [deletingInProgress, setDeletingInProgress] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState(INITIAL_FORM);
@@ -162,7 +163,7 @@ export default function AdminProducts() {
   }, [products, selectedCategory, selectedStockStatus, selectedProductStatus, searchQuery]);
 
   const handleOpenEdit = (product) => {
-    setEditingId(product.id);
+    setEditingId(product._id || product.id);
     const existingImage =
       product.image ||
       product.imageUrl ||
@@ -220,10 +221,11 @@ export default function AdminProducts() {
 
   const handleToggleStatus = async (product) => {
     const nextStatus = (product.status || 'active') === 'active' ? 'inactive' : 'active';
+    const targetId = product._id || product.id;
     try {
-      const updated = await updateProductStatus(product.id, nextStatus);
+      const updated = await updateProductStatus(targetId, nextStatus);
       setProducts((prev) =>
-        prev.map((p) => (p.id === product.id ? { ...p, ...updated, status: nextStatus } : p))
+        prev.map((p) => ((p._id || p.id) === targetId || p.id === targetId ? { ...p, ...updated, status: nextStatus } : p))
       );
       showToast(`Product "${product.name}" marked as ${nextStatus.toUpperCase()}.`);
     } catch (err) {
@@ -321,6 +323,7 @@ export default function AdminProducts() {
 
   const handleSaveProduct = async (e) => {
     e.preventDefault();
+    if (formSubmitting) return;
     setErrorMessage('');
 
     const trimmedName = formData.name.trim();
@@ -419,7 +422,7 @@ export default function AdminProducts() {
       }
 
       // Verification: ensure image field was actually saved
-      if (payload.image && savedProduct.image !== payload.image) {
+      if (payload.image?.trim() && (savedProduct.image || '').trim() !== payload.image.trim()) {
         throw new Error('Image failed to save on the server. Please try again.');
       }
 
@@ -430,7 +433,7 @@ export default function AdminProducts() {
       } else {
         setProducts((prev) =>
           editingId
-            ? prev.map((p) => (p.id === editingId ? { ...p, ...savedProduct } : p))
+            ? prev.map((p) => ((p._id || p.id) === editingId || p.id === editingId ? { ...p, ...savedProduct } : p))
             : [savedProduct, ...prev]
         );
       }
@@ -458,10 +461,11 @@ export default function AdminProducts() {
     }
     if (qty === product.stockQuantity) return;
 
+    const targetId = product._id || product.id;
     try {
-      const updated = await updateProductStock(product.id, qty);
+      const updated = await updateProductStock(targetId, qty);
       setProducts((prev) =>
-        prev.map((p) => (p.id === product.id ? { ...p, ...updated, stockQuantity: qty, stock: qty } : p))
+        prev.map((p) => ((p._id || p.id) === targetId || p.id === targetId ? { ...p, ...updated, stockQuantity: qty, stock: qty } : p))
       );
       showToast(`Stock updated for ${product.name} (${qty} units).`);
     } catch (err) {
@@ -471,16 +475,28 @@ export default function AdminProducts() {
   };
 
   const handleDeleteConfirm = async () => {
-    if (!deletingProduct) return;
+    if (!deletingProduct || deletingInProgress) return;
 
+    setDeletingInProgress(true);
+    // Prioritize MongoDB _id as the primary delete identifier
+    const targetId = deletingProduct._id || deletingProduct.id;
     try {
-      await deleteProduct(deletingProduct.id);
-      setProducts((prev) => prev.filter((p) => p.id !== deletingProduct.id));
+      await deleteProduct(targetId);
+      setProducts((prev) => prev.filter((p) => (p._id || p.id) !== targetId && p.id !== targetId));
       showToast(`Product "${deletingProduct.name}" deleted.`);
       setDeletingProduct(null);
+
+      // Refresh product list from server to ensure fresh state
+      fetchProducts({ includeInactive: true })
+        .then((fresh) => {
+          if (Array.isArray(fresh)) setProducts(fresh);
+        })
+        .catch((err) => console.warn('Product refresh warning after delete:', err));
     } catch (err) {
       console.error('Delete error:', err);
       showToast(err.message || 'Failed to delete product.');
+    } finally {
+      setDeletingInProgress(false);
     }
   };
 
@@ -581,7 +597,7 @@ export default function AdminProducts() {
               </thead>
               <tbody>
                 {filteredProducts.map((p) => (
-                  <tr key={p.id}>
+                  <tr key={p._id || p.id}>
                     <td>
                       <div className={styles.productCell}>
                         {p.image || p.imageUrl || p.thumbnail || (Array.isArray(p.images) && p.images[0]) ? (
@@ -1083,10 +1099,11 @@ export default function AdminProducts() {
               </button>
               <button
                 type="button"
+                disabled={deletingInProgress}
                 onClick={handleDeleteConfirm}
                 className={styles.deleteDangerBtn}
               >
-                Yes, Delete Product
+                {deletingInProgress ? 'Deleting...' : 'Yes, Delete Product'}
               </button>
             </div>
           </div>

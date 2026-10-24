@@ -1,4 +1,5 @@
 import { getApiUrl } from './apiConfig';
+import { getAdminAuthHeaders } from './adminAuthApi';
 
 const API_BASE = getApiUrl('/api/admin/coupons');
 const PUBLIC_API = getApiUrl('/api/coupons');
@@ -38,7 +39,9 @@ export async function fetchAvailableCoupons() {
  */
 export async function fetchAdminCoupons(search = '') {
   const qs = search ? `?search=${encodeURIComponent(search)}` : '';
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}${qs}`, {
+    headers,
     credentials: 'include',
   });
 
@@ -54,9 +57,10 @@ export async function fetchAdminCoupons(search = '') {
  * Create new coupon
  */
 export async function createCoupon(couponData) {
+  const headers = getAdminAuthHeaders({ 'Content-Type': 'application/json' });
   const res = await fetch(API_BASE, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify(couponData),
   });
@@ -73,9 +77,10 @@ export async function createCoupon(couponData) {
  * Update existing coupon
  */
 export async function updateCoupon(id, couponData) {
+  const headers = getAdminAuthHeaders({ 'Content-Type': 'application/json' });
   const res = await fetch(`${API_BASE}/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify(couponData),
   });
@@ -92,8 +97,10 @@ export async function updateCoupon(id, couponData) {
  * Delete a coupon
  */
 export async function deleteCoupon(id) {
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}/${id}`, {
     method: 'DELETE',
+    headers,
     credentials: 'include',
   });
 

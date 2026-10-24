@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { Product } from '../models/Product.js';
 import { INITIAL_PRODUCTS } from '../data/initialProducts.js';
 import { isDbConnected } from '../config/db.js';
@@ -235,13 +236,23 @@ class ProductRepository {
   async getById(id) {
     await this.seedDatabaseIfEmpty();
     if (isDbConnected()) {
-      const doc = await Product.findOne({
-        $or: [{ id: String(id) }, { sku: String(id).toUpperCase() }],
-      }).exec();
+      const isObjectId = mongoose.Types.ObjectId.isValid(id);
+      const orConditions = [{ id: String(id) }, { sku: String(id).toUpperCase() }];
+      if (isObjectId) {
+        orConditions.push({ _id: id });
+      }
+      const doc = await Product.findOne({ $or: orConditions }).exec();
       return doc ? doc.toJSON() : null;
     }
 
-    return this.memoryProducts.find((p) => String(p.id) === String(id) || String(p.sku) === String(id)) || null;
+    return (
+      this.memoryProducts.find(
+        (p) =>
+          String(p.id) === String(id) ||
+          String(p._id) === String(id) ||
+          String(p.sku) === String(id)
+      ) || null
+    );
   }
 
   /**
@@ -342,6 +353,21 @@ class ProductRepository {
       }
       productPayload.id = slug;
 
+      // Ensure unique SKU
+      if (!productPayload.sku || typeof productPayload.sku !== 'string' || !productPayload.sku.trim()) {
+        const catCode = (productPayload.category || 'GEN').slice(0, 3).toUpperCase();
+        const brandCode = (productPayload.brand || 'DKT').slice(0, 3).toUpperCase().replace(/[^A-Z0-9]/g, '');
+        const sizeCode = productPayload.bottleSizeInMl || 750;
+        productPayload.sku = `${catCode}-${brandCode}-${sizeCode}`;
+      }
+      let skuCounter = 1;
+      const baseSku = productPayload.sku.trim().toUpperCase();
+      let uniqueSku = baseSku;
+      while (await Product.findOne({ sku: uniqueSku }).exec()) {
+        uniqueSku = `${baseSku}-${skuCounter++}`;
+      }
+      productPayload.sku = uniqueSku;
+
       const created = await Product.create(productPayload);
       return created.toJSON();
     }
@@ -426,8 +452,10 @@ class ProductRepository {
     }
 
     if (isDbConnected()) {
+      const isObjectId = mongoose.Types.ObjectId.isValid(id);
+      const query = isObjectId ? { $or: [{ _id: id }, { id: String(id) }] } : { id: String(id) };
       const updated = await Product.findOneAndUpdate(
-        { id: String(id) },
+        query,
         { $set: cleanUpdates },
         { new: true }
       ).exec();
@@ -435,7 +463,9 @@ class ProductRepository {
       return updated ? updated.toJSON() : null;
     }
 
-    const index = this.memoryProducts.findIndex((p) => String(p.id) === String(id));
+    const index = this.memoryProducts.findIndex(
+      (p) => String(p.id) === String(id) || String(p._id) === String(id)
+    );
     if (index === -1) return null;
 
     const current = this.memoryProducts[index];
@@ -713,11 +743,15 @@ class ProductRepository {
    */
   async delete(id) {
     if (isDbConnected()) {
-      const deleted = await Product.findOneAndDelete({ id: String(id) }).exec();
+      const isObjectId = mongoose.Types.ObjectId.isValid(id);
+      const query = isObjectId ? { $or: [{ _id: id }, { id: String(id) }] } : { id: String(id) };
+      const deleted = await Product.findOneAndDelete(query).exec();
       return deleted ? deleted.toJSON() : null;
     }
 
-    const index = this.memoryProducts.findIndex((p) => String(p.id) === String(id));
+    const index = this.memoryProducts.findIndex(
+      (p) => String(p.id) === String(id) || String(p._id) === String(id)
+    );
     if (index === -1) return null;
     const [deleted] = this.memoryProducts.splice(index, 1);
     return deleted;

@@ -1,4 +1,5 @@
 import { getApiUrl } from './apiConfig';
+import { getAdminAuthHeaders } from './adminAuthApi';
 
 const API_BASE = getApiUrl('/api/admin/inventory');
 
@@ -7,7 +8,9 @@ const API_BASE = getApiUrl('/api/admin/inventory');
  * @param {number} threshold
  */
 export async function fetchInventorySummary(threshold = 5) {
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}/summary?threshold=${encodeURIComponent(threshold)}`, {
+    headers,
     credentials: 'include',
   });
 
@@ -31,7 +34,9 @@ export async function fetchInventoryItems({ threshold = 5, status = 'All', categ
   if (sortBy) params.append('sortBy', sortBy);
 
   const qs = params.toString() ? `?${params.toString()}` : '';
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}/items${qs}`, {
+    headers,
     credentials: 'include',
   });
 
@@ -52,9 +57,10 @@ export async function fetchInventoryItems({ threshold = 5, status = 'All', categ
  * @param {string} payload.reason
  */
 export async function adjustProductStock({ productId, quantity, adjustmentType = 'delta', reason }) {
+  const headers = getAdminAuthHeaders({ 'Content-Type': 'application/json' });
   const res = await fetch(`${API_BASE}/adjust`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify({
       productId,
@@ -90,7 +96,9 @@ export async function fetchStockHistory({ productId = '', type = '', category = 
   if (skip) params.append('skip', skip);
 
   const qs = params.toString() ? `?${params.toString()}` : '';
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}/history${qs}`, {
+    headers,
     credentials: 'include',
   });
 

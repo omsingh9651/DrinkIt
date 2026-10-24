@@ -1,5 +1,6 @@
 import { PRODUCTS, getProductById as getLocalProductById } from '../data/products';
 import { getApiUrl } from './apiConfig';
+import { getAdminAuthHeaders } from './adminAuthApi';
 
 const API_BASE = getApiUrl('/api/products');
 
@@ -19,7 +20,11 @@ export async function fetchProducts({ category, q, sortBy, inStock, minPrice, ma
     if (includeInactive) params.append('includeInactive', 'true');
 
     const queryString = params.toString() ? `?${params.toString()}` : '';
-    const res = await fetch(`${API_BASE}${queryString}`);
+    const headers = getAdminAuthHeaders();
+    const res = await fetch(`${API_BASE}${queryString}`, {
+      headers,
+      credentials: 'include',
+    });
 
     if (res.ok) {
       const data = await res.json();
@@ -130,16 +135,20 @@ export async function fetchCategories() {
  * Create a new product (Admin - Protected)
  */
 export async function createProduct(productData) {
+  const headers = getAdminAuthHeaders({ 'Content-Type': 'application/json' });
   const res = await fetch(API_BASE, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify(productData),
   });
 
   const data = await res.json();
   if (!res.ok || !data.success) {
-    throw new Error(data.error || 'Failed to create product');
+    const errorMsg = data.error || data.message || 'Failed to create product';
+    const err = new Error(errorMsg);
+    err.status = res.status;
+    throw err;
   }
   return data.product;
 }
@@ -148,16 +157,20 @@ export async function createProduct(productData) {
  * Update existing product (Admin - Protected)
  */
 export async function updateProduct(id, updates) {
+  const headers = getAdminAuthHeaders({ 'Content-Type': 'application/json' });
   const res = await fetch(`${API_BASE}/${encodeURIComponent(id)}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify(updates),
   });
 
   const data = await res.json();
   if (!res.ok || !data.success) {
-    throw new Error(data.error || 'Failed to update product');
+    const errorMsg = data.error || data.message || 'Failed to update product';
+    const err = new Error(errorMsg);
+    err.status = res.status;
+    throw err;
   }
   return data.product;
 }
@@ -166,16 +179,20 @@ export async function updateProduct(id, updates) {
  * Fast stock updater (Admin - Protected)
  */
 export async function updateProductStock(id, stockQuantity) {
+  const headers = getAdminAuthHeaders({ 'Content-Type': 'application/json' });
   const res = await fetch(`${API_BASE}/${encodeURIComponent(id)}/stock`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify({ stockQuantity: Number(stockQuantity) }),
   });
 
   const data = await res.json();
   if (!res.ok || !data.success) {
-    throw new Error(data.error || 'Failed to update stock');
+    const errorMsg = data.error || data.message || 'Failed to update stock';
+    const err = new Error(errorMsg);
+    err.status = res.status;
+    throw err;
   }
   return data.product;
 }
@@ -186,16 +203,20 @@ export async function updateProductStock(id, stockQuantity) {
  * @param {'active' | 'inactive'} status
  */
 export async function updateProductStatus(id, status) {
+  const headers = getAdminAuthHeaders({ 'Content-Type': 'application/json' });
   const res = await fetch(`${API_BASE}/${encodeURIComponent(id)}/status`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify({ status }),
   });
 
   const data = await res.json();
   if (!res.ok || !data.success) {
-    throw new Error(data.error || 'Failed to update product status');
+    const errorMsg = data.error || data.message || 'Failed to update product status';
+    const err = new Error(errorMsg);
+    err.status = res.status;
+    throw err;
   }
   return data.product;
 }
@@ -204,14 +225,19 @@ export async function updateProductStatus(id, status) {
  * Delete product (Admin - Protected)
  */
 export async function deleteProduct(id) {
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}/${encodeURIComponent(id)}`, {
     method: 'DELETE',
+    headers,
     credentials: 'include',
   });
 
   const data = await res.json();
   if (!res.ok || !data.success) {
-    throw new Error(data.error || 'Failed to delete product');
+    const errorMsg = data.error || data.message || 'Failed to delete product';
+    const err = new Error(errorMsg);
+    err.status = res.status;
+    throw err;
   }
   return data.product;
 }
@@ -225,15 +251,20 @@ export async function uploadProductImage(file) {
   const formData = new FormData();
   formData.append('image', file);
 
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}/upload-image`, {
     method: 'POST',
+    headers,
     credentials: 'include',
     body: formData,
   });
 
   const data = await res.json();
   if (!res.ok || !data.success) {
-    throw new Error(data.error || 'Failed to upload image');
+    const errorMsg = data.error || data.message || 'Failed to upload image';
+    const err = new Error(errorMsg);
+    err.status = res.status;
+    throw err;
   }
   return data.url || data.image;
 }

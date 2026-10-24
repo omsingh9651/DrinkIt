@@ -19,7 +19,7 @@ function getCookieOptions() {
   return {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? 'strict' : 'lax',
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: COOKIE_MAX_AGE,
     path: '/',
   };
@@ -120,10 +120,11 @@ router.post('/login', async (req, res) => {
       ipAddress: clientIp,
     });
 
-    // Return safe user payload (NO tokens, NO hashes in JSON)
+    // Return user payload and JWT token for Bearer Authorization header
     return res.status(200).json({
       success: true,
       message: 'Admin authentication successful.',
+      token,
       admin: {
         id: adminRecord.id || adminRecord._id,
         email: adminRecord.email,
@@ -149,7 +150,7 @@ router.post('/logout', (req, res) => {
     res.clearCookie(COOKIE_NAME, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       path: '/',
     });
 
@@ -171,10 +172,15 @@ router.post('/logout', (req, res) => {
  * Returns current authenticated admin profile. Protected.
  */
 router.get('/me', requireAdmin, async (req, res) => {
+  const token = req.headers?.authorization?.startsWith('Bearer ')
+    ? req.headers.authorization.slice(7).trim()
+    : req.cookies?.admin_token || null;
+
   try {
     const freshRecord = await adminUserRepository.getByEmail(req.admin.email);
     return res.status(200).json({
       success: true,
+      token,
       admin: {
         id: freshRecord?.id || req.admin.id,
         email: req.admin.email,
@@ -186,6 +192,7 @@ router.get('/me', requireAdmin, async (req, res) => {
   } catch {
     return res.status(200).json({
       success: true,
+      token,
       admin: {
         email: req.admin.email,
         role: req.admin.role,

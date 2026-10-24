@@ -1,4 +1,5 @@
 import { getApiUrl } from './apiConfig';
+import { getAdminAuthHeaders } from './adminAuthApi';
 
 const API_BASE = getApiUrl('/api/admin/payments');
 
@@ -24,7 +25,9 @@ export async function fetchAdminPayments({
   if (limit) params.append('limit', limit);
 
   const qs = params.toString() ? `?${params.toString()}` : '';
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}${qs}`, {
+    headers,
     credentials: 'include',
   });
 
@@ -55,9 +58,10 @@ export async function fetchAdminPayments({
  * Refund an order payment
  */
 export async function refundOrderPayment(orderId, reason = '') {
+  const headers = getAdminAuthHeaders({ 'Content-Type': 'application/json' });
   const res = await fetch(`${API_BASE}/${orderId}/refund`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify({ reason }),
   });

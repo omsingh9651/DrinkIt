@@ -1,4 +1,5 @@
 import { getApiUrl } from './apiConfig';
+import { getAdminAuthHeaders } from './adminAuthApi';
 
 const API_BASE = getApiUrl('/api/admin/banners');
 const PUBLIC_API = getApiUrl('/api/banners');
@@ -25,7 +26,9 @@ export async function fetchAdminBanners({ search = '', status = 'ALL', page = 1,
   if (page) params.append('page', page);
   if (limit) params.append('limit', limit);
 
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}?${params.toString()}`, {
+    headers,
     credentials: 'include',
   });
 
@@ -41,9 +44,10 @@ export async function fetchAdminBanners({ search = '', status = 'ALL', page = 1,
  * Create a new banner
  */
 export async function createBanner(payload) {
+  const headers = getAdminAuthHeaders({ 'Content-Type': 'application/json' });
   const res = await fetch(API_BASE, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify(payload),
   });
@@ -60,9 +64,10 @@ export async function createBanner(payload) {
  * Update an existing banner
  */
 export async function updateBanner(id, payload) {
+  const headers = getAdminAuthHeaders({ 'Content-Type': 'application/json' });
   const res = await fetch(`${API_BASE}/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify(payload),
   });
@@ -79,8 +84,10 @@ export async function updateBanner(id, payload) {
  * Delete a banner
  */
 export async function deleteBanner(id) {
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}/${id}`, {
     method: 'DELETE',
+    headers,
     credentials: 'include',
   });
 

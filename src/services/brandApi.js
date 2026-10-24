@@ -1,4 +1,5 @@
 import { getApiUrl } from './apiConfig';
+import { getAdminAuthHeaders } from './adminAuthApi';
 
 const API_BASE = getApiUrl('/api/admin/brands');
 const PUBLIC_API = getApiUrl('/api/brands');
@@ -19,7 +20,9 @@ export async function fetchPublicBrands() {
  * Fetch all brands for Admin (includes inactive & product counts)
  */
 export async function fetchAdminBrands() {
+  const headers = getAdminAuthHeaders();
   const res = await fetch(API_BASE, {
+    headers,
     credentials: 'include',
   });
   const data = await res.json();
@@ -33,9 +36,10 @@ export async function fetchAdminBrands() {
  * Create a new brand
  */
 export async function createBrand(brandData) {
+  const headers = getAdminAuthHeaders({ 'Content-Type': 'application/json' });
   const res = await fetch(API_BASE, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify(brandData),
   });
@@ -50,9 +54,10 @@ export async function createBrand(brandData) {
  * Update an existing brand
  */
 export async function updateBrand(id, brandData) {
+  const headers = getAdminAuthHeaders({ 'Content-Type': 'application/json' });
   const res = await fetch(`${API_BASE}/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify(brandData),
   });
@@ -67,8 +72,10 @@ export async function updateBrand(id, brandData) {
  * Delete a brand
  */
 export async function deleteBrand(id) {
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}/${id}`, {
     method: 'DELETE',
+    headers,
     credentials: 'include',
   });
   const data = await res.json();

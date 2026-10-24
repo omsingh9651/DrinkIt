@@ -1,4 +1,5 @@
 import { getApiUrl } from './apiConfig';
+import { getAdminAuthHeaders } from './adminAuthApi';
 
 const API_BASE = getApiUrl('/api/admin/categories');
 const PUBLIC_API = getApiUrl('/api/categories');
@@ -19,7 +20,9 @@ export async function fetchPublicCategories() {
  * Fetch all categories for Admin (includes inactive & product counts)
  */
 export async function fetchAdminCategories() {
+  const headers = getAdminAuthHeaders();
   const res = await fetch(API_BASE, {
+    headers,
     credentials: 'include',
   });
   const data = await res.json();
@@ -33,9 +36,10 @@ export async function fetchAdminCategories() {
  * Create a new category
  */
 export async function createCategory(categoryData) {
+  const headers = getAdminAuthHeaders({ 'Content-Type': 'application/json' });
   const res = await fetch(API_BASE, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify(categoryData),
   });
@@ -50,9 +54,10 @@ export async function createCategory(categoryData) {
  * Update an existing category
  */
 export async function updateCategory(id, categoryData) {
+  const headers = getAdminAuthHeaders({ 'Content-Type': 'application/json' });
   const res = await fetch(`${API_BASE}/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify(categoryData),
   });
@@ -67,8 +72,10 @@ export async function updateCategory(id, categoryData) {
  * Delete a category
  */
 export async function deleteCategory(id) {
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}/${id}`, {
     method: 'DELETE',
+    headers,
     credentials: 'include',
   });
   const data = await res.json();

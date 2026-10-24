@@ -1,4 +1,5 @@
 import { getApiUrl } from './apiConfig';
+import { getAdminAuthHeaders } from './adminAuthApi';
 
 const API_BASE = getApiUrl('/api/admin/customers');
 
@@ -12,7 +13,9 @@ export async function fetchAdminCustomers({ search = '', status = 'ALL', page = 
   if (page) params.append('page', page);
   if (limit) params.append('limit', limit);
 
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}?${params.toString()}`, {
+    headers,
     credentials: 'include',
   });
 
@@ -24,11 +27,10 @@ export async function fetchAdminCustomers({ search = '', status = 'ALL', page = 
   return data;
 }
 
-/**
- * Fetch detailed customer profile and complete order history
- */
 export async function fetchCustomerDetails(phone) {
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}/${encodeURIComponent(phone)}`, {
+    headers,
     credentials: 'include',
   });
 
@@ -44,9 +46,10 @@ export async function fetchCustomerDetails(phone) {
  * Activate or deactivate customer account
  */
 export async function updateCustomerStatus(phone, isActive) {
+  const headers = getAdminAuthHeaders({ 'Content-Type': 'application/json' });
   const res = await fetch(`${API_BASE}/${encodeURIComponent(phone)}/status`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify({ isActive }),
   });

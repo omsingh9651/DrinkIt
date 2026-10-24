@@ -1,4 +1,5 @@
 import { getApiUrl } from './apiConfig';
+import { getAdminAuthHeaders } from './adminAuthApi';
 
 function getHeaders(customerPhone) {
   const headers = {
@@ -29,12 +30,15 @@ async function parseResponse(res, context = 'Order API') {
 
   if (!res.ok || data.success === false) {
     if (res.status === 401 && typeof window !== 'undefined') {
-      try {
-        localStorage.removeItem('drinkit_customer_token');
-        localStorage.removeItem('drinkit_user_session');
-        window.dispatchEvent(new Event('drinkit:auth-expired'));
-      } catch {
-        // Ignore storage errors
+      const isAdminContext = /admin|delivery/i.test(context);
+      if (!isAdminContext) {
+        try {
+          localStorage.removeItem('drinkit_customer_token');
+          localStorage.removeItem('drinkit_user_session');
+          window.dispatchEvent(new Event('drinkit:auth-expired'));
+        } catch {
+          // Ignore storage errors
+        }
       }
     }
     throw new Error(data.error || data.message || `${context} request failed (HTTP ${res.status}).`);
@@ -123,9 +127,9 @@ export async function fetchAdminOrders({
 
   const res = await fetch(getApiUrl(`/api/admin/orders?${params.toString()}`), {
     method: 'GET',
-    headers: {
+    headers: getAdminAuthHeaders({
       'Content-Type': 'application/json',
-    },
+    }),
     credentials: 'include',
   });
 
@@ -146,9 +150,9 @@ export async function fetchAdminOrders({
 export async function fetchAdminOrderById(orderId) {
   const res = await fetch(getApiUrl(`/api/admin/orders/${orderId}`), {
     method: 'GET',
-    headers: {
+    headers: getAdminAuthHeaders({
       'Content-Type': 'application/json',
-    },
+    }),
     credentials: 'include',
   });
 
@@ -162,9 +166,9 @@ export async function fetchAdminOrderById(orderId) {
 export async function updateAdminOrderStatus(orderId, { orderStatus, paymentStatus, note }) {
   const res = await fetch(getApiUrl(`/api/admin/orders/${orderId}/status`), {
     method: 'PATCH',
-    headers: {
+    headers: getAdminAuthHeaders({
       'Content-Type': 'application/json',
-    },
+    }),
     credentials: 'include',
     body: JSON.stringify({ orderStatus, paymentStatus, note }),
   });
@@ -178,7 +182,8 @@ export async function updateAdminOrderStatus(orderId, { orderStatus, paymentStat
 export async function fetchDeliveryStores() {
   const res = await fetch(getApiUrl('/api/delivery/stores'), {
     method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
+    credentials: 'include',
   });
   const data = await parseResponse(res, 'Fetch Delivery Stores');
   return data.stores || [];
@@ -190,7 +195,7 @@ export async function fetchDeliveryStores() {
 export async function fetchDeliveryPartners() {
   const res = await fetch(getApiUrl('/api/delivery/partners'), {
     method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
     credentials: 'include',
   });
   const data = await parseResponse(res, 'Fetch Delivery Partners');
@@ -203,7 +208,7 @@ export async function fetchDeliveryPartners() {
 export async function assignDeliveryPartnerAndStore(orderId, { partnerId, storeId }) {
   const res = await fetch(getApiUrl(`/api/delivery/orders/${orderId}/assign`), {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
     credentials: 'include',
     body: JSON.stringify({ partnerId, storeId }),
   });
@@ -217,7 +222,7 @@ export async function assignDeliveryPartnerAndStore(orderId, { partnerId, storeI
 export async function resetDeliveryLocation(orderId) {
   const res = await fetch(getApiUrl(`/api/delivery/orders/${orderId}/reset`), {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
     credentials: 'include',
   });
   const data = await parseResponse(res, 'Reset Delivery Location');

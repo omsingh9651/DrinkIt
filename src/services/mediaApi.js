@@ -1,4 +1,5 @@
 import { getApiUrl } from './apiConfig';
+import { getAdminAuthHeaders } from './adminAuthApi';
 
 const API_BASE = getApiUrl('/api/admin/media');
 
@@ -11,7 +12,9 @@ export async function fetchAdminMedia({ search = '', source = 'all' } = {}) {
   if (source && source !== 'all') params.append('source', source);
 
   const qs = params.toString() ? `?${params.toString()}` : '';
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}${qs}`, {
+    headers,
     credentials: 'include',
   });
   const data = await res.json();
@@ -28,8 +31,10 @@ export async function uploadMediaFile(file) {
   const formData = new FormData();
   formData.append('file', file);
 
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}/upload`, {
     method: 'POST',
+    headers,
     credentials: 'include',
     body: formData,
   });
@@ -44,9 +49,10 @@ export async function uploadMediaFile(file) {
  * Add external image URL
  */
 export async function addExternalMediaUrl(mediaData) {
+  const headers = getAdminAuthHeaders({ 'Content-Type': 'application/json' });
   const res = await fetch(`${API_BASE}/url`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify(mediaData),
   });
@@ -61,8 +67,10 @@ export async function addExternalMediaUrl(mediaData) {
  * Delete media asset
  */
 export async function deleteMedia(id) {
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}/${id}`, {
     method: 'DELETE',
+    headers,
     credentials: 'include',
   });
   const data = await res.json();

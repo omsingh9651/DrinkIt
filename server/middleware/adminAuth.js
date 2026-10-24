@@ -16,19 +16,20 @@ export const ADMIN_ROLES = {
  * Extract token from HTTP-only cookie or Authorization header
  */
 function extractToken(req) {
+  const authHeader = req.headers?.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.slice(7).trim();
+    if (token) return token;
+  }
   if (req.cookies && req.cookies.admin_token) {
     return req.cookies.admin_token;
-  }
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    return authHeader.slice(7).trim();
   }
   return null;
 }
 
 /**
  * Middleware: Verify Admin Authentication
- * Rejects with 401 if missing, expired, or invalid.
+ * Rejects with 401 if missing, expired, or invalid. Rejects with 403 if customer token.
  */
 export function requireAdmin(req, res, next) {
   const token = extractToken(req);
@@ -60,6 +61,13 @@ export function requireAdmin(req, res, next) {
       });
     }
 
+    if (decoded.role === 'customer') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access denied. Customer accounts are not permitted to perform administrator actions.',
+      });
+    }
+
     // Attach verified admin identity to request object
     req.admin = {
       email: decoded.email,
@@ -73,6 +81,22 @@ export function requireAdmin(req, res, next) {
         success: false,
         error: 'Admin session expired. Please sign in again.',
       });
+    }
+
+    // Check if token was signed with customer JWT secret
+    const customerSecret = process.env.CUSTOMER_JWT_SECRET;
+    if (customerSecret) {
+      try {
+        const decodedCustomer = jwt.verify(token, customerSecret);
+        if (decodedCustomer && (decodedCustomer.phone || decodedCustomer.role === 'customer')) {
+          return res.status(403).json({
+            success: false,
+            error: 'Access denied. Customer accounts are not permitted to perform administrator actions.',
+          });
+        }
+      } catch {
+        // Not a valid customer token
+      }
     }
 
     return res.status(401).json({

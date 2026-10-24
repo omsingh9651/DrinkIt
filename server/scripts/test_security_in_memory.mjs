@@ -219,10 +219,10 @@ async function runTests() {
     let nextCalled = false;
     requireAdmin(req, res, () => { nextCalled = true; });
 
-    if (res.statusCode === 401 && !nextCalled) {
-      pass('Customer Accessing Admin Delivery Route', `HTTP 401: "${res.payload?.error}"`);
+    if ((res.statusCode === 401 || res.statusCode === 403) && !nextCalled) {
+      pass('Customer Accessing Admin Delivery Route', `HTTP ${res.statusCode}: "${res.payload?.error}"`);
     } else {
-      fail('Customer Accessing Admin Delivery Route', `Expected 401, got ${res.statusCode}`);
+      fail('Customer Accessing Admin Delivery Route', `Expected 401 or 403, got ${res.statusCode}`);
     }
   }
 

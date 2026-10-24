@@ -1,4 +1,5 @@
 import { getApiUrl } from './apiConfig';
+import { getAdminAuthHeaders } from './adminAuthApi';
 
 const API_BASE = getApiUrl('/api/admin/activity-logs');
 
@@ -14,7 +15,9 @@ export async function fetchActivityLogs({ module = 'ALL', search = '', startDate
   if (page) params.append('page', page);
   if (limit) params.append('limit', limit);
 
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}?${params.toString()}`, {
+    headers,
     credentials: 'include',
   });
 

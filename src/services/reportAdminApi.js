@@ -1,4 +1,5 @@
 import { getApiUrl } from './apiConfig';
+import { getAdminAuthHeaders } from './adminAuthApi';
 
 const API_BASE = getApiUrl('/api/admin/reports');
 
@@ -11,7 +12,9 @@ export async function fetchAnalytics({ range = '30d', startDate, endDate } = {})
   if (startDate) params.append('startDate', startDate);
   if (endDate) params.append('endDate', endDate);
 
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}/analytics?${params.toString()}`, {
+    headers,
     credentials: 'include',
   });
 
@@ -32,7 +35,9 @@ export async function downloadOrdersCsv({ range = '30d', startDate, endDate } = 
   if (startDate) params.append('startDate', startDate);
   if (endDate) params.append('endDate', endDate);
 
+  const headers = getAdminAuthHeaders();
   const res = await fetch(`${API_BASE}/export?${params.toString()}`, {
+    headers,
     credentials: 'include',
   });
 

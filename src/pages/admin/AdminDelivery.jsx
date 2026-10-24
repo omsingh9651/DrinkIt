@@ -122,29 +122,45 @@ export default function AdminDelivery() {
   // Load initial orders, stores, and partners
   useEffect(() => {
     let isMounted = true;
-    Promise.all([
+    Promise.allSettled([
       fetchAdminOrders({ status: 'ALL', limit: 100 }),
-      fetchDeliveryStores().catch(() => []),
-      fetchDeliveryPartners().catch(() => []),
+      fetchDeliveryStores(),
+      fetchDeliveryPartners(),
     ])
-      .then(([orderRes, storeList, partnerList]) => {
+      .then(([orderRes, storeRes, partnerRes]) => {
         if (!isMounted) return;
-        const list = Array.isArray(orderRes) ? orderRes : (orderRes?.orders || []);
+
+        const orderData = orderRes.status === 'fulfilled' ? orderRes.value : null;
+        const storeData = storeRes.status === 'fulfilled' ? storeRes.value : [];
+        const partnerData = partnerRes.status === 'fulfilled' ? partnerRes.value : [];
+
+        const list = Array.isArray(orderData) ? orderData : (orderData?.orders || []);
+        const storeList = Array.isArray(storeData) ? storeData : (storeData?.stores || []);
+        const partnerList = Array.isArray(partnerData) ? partnerData : (partnerData?.partners || []);
+
         setOrders(list);
         setStores(storeList);
         setPartners(partnerList);
+
+        if (orderRes.status === 'rejected' && partnerRes.status === 'rejected') {
+          console.error('Delivery initialization error:', orderRes.reason, partnerRes.reason);
+          setActionError('Failed to load orders or delivery partners.');
+        } else if (orderRes.status === 'rejected') {
+          console.error('Failed to load orders:', orderRes.reason);
+          setActionError('Failed to load orders.');
+        } else if (partnerRes.status === 'rejected') {
+          console.error('Failed to load delivery partners:', partnerRes.reason);
+          setActionError('Failed to load delivery partners.');
+        } else {
+          setActionError(null);
+        }
+
         if (list.length > 0) {
           const active =
             list.find((o) => o.orderStatus === 'OUT_FOR_DELIVERY' || o.orderStatus === 'READY') ||
             list[0];
           setSelectedOrderId(active.id);
         }
-        setLoading(false);
-      })
-      .catch((err) => {
-        if (!isMounted) return;
-        console.error('Failed to load delivery center data:', err);
-        setActionError('Failed to load orders or delivery partners.');
         setLoading(false);
       });
 
@@ -155,14 +171,19 @@ export default function AdminDelivery() {
 
   const reloadData = async () => {
     try {
-      const [orderRes, storeList, partnerList] = await Promise.all([
+      const [orderRes, storeRes, partnerRes] = await Promise.allSettled([
         fetchAdminOrders({ status: 'ALL', limit: 100 }),
-        fetchDeliveryStores().catch(() => []),
-        fetchDeliveryPartners().catch(() => []),
+        fetchDeliveryStores(),
+        fetchDeliveryPartners(),
       ]);
-      setOrders(Array.isArray(orderRes) ? orderRes : (orderRes?.orders || []));
-      setStores(storeList);
-      setPartners(partnerList);
+
+      const orderData = orderRes.status === 'fulfilled' ? orderRes.value : null;
+      const storeData = storeRes.status === 'fulfilled' ? storeRes.value : [];
+      const partnerData = partnerRes.status === 'fulfilled' ? partnerRes.value : [];
+
+      setOrders(Array.isArray(orderData) ? orderData : (orderData?.orders || []));
+      setStores(Array.isArray(storeData) ? storeData : (storeData?.stores || []));
+      setPartners(Array.isArray(partnerData) ? partnerData : (partnerData?.partners || []));
     } catch (err) {
       console.error('Failed to reload delivery center data:', err);
     }
