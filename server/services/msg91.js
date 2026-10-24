@@ -16,12 +16,23 @@ export const RATE_LIMIT_MESSAGE = 'Too many OTP attempts. Please try again after
  * Custom error class for MSG91 operations with rate limit and authentication metadata
  */
 export class Msg91Error extends Error {
-  constructor(message, { statusCode = 500, isRateLimit = false, isAuthFailure = false, retryAfter = 900, cause } = {}) {
+  constructor(
+    message,
+    {
+      statusCode = 500,
+      isRateLimit = false,
+      isAuthFailure = false,
+      isIpRestriction = false,
+      retryAfter = 900,
+      cause,
+    } = {}
+  ) {
     super(message, cause ? { cause } : undefined);
     this.name = 'Msg91Error';
     this.statusCode = statusCode;
     this.isRateLimit = isRateLimit;
     this.isAuthFailure = isAuthFailure;
+    this.isIpRestriction = isIpRestriction;
     this.retryAfter = retryAfter;
   }
 }
@@ -43,17 +54,33 @@ export function isRateLimitResponse(status, message = '') {
 }
 
 /**
+ * Detects if a status code or error text indicates MSG91 IP whitelisting / security restriction
+ */
+export function isIpRestrictionResponse(code, message = '') {
+  const codeStr = String(code || '');
+  if (['208', '418'].includes(codeStr)) return true;
+  const lower = String(message).toLowerCase();
+  return (
+    (lower.includes('ip') && (lower.includes('whitelist') || lower.includes('security') || lower.includes('not allowed') || lower.includes('blocked'))) ||
+    lower.includes('ip security')
+  );
+}
+
+/**
  * Detects if a status code or error text indicates MSG91 authentication failure
  */
 export function isAuthFailureResponse(code, message = '') {
-  if (String(code) === '201' || String(code) === '401') return true;
+  const codeStr = String(code || '');
+  if (['201', '204', '207', '401'].includes(codeStr)) return true;
   const lower = String(message).toLowerCase();
   return (
     lower.includes('authenticationfailure') ||
     lower.includes('authentication failure') ||
     lower.includes('invalid authkey') ||
     lower.includes('authkey not found') ||
-    lower.includes('unauthorized')
+    lower.includes('unauthorized') ||
+    lower.includes('permission not enabled') ||
+    lower.includes('access denied')
   );
 }
 
@@ -68,7 +95,7 @@ export function formatIndianMobile(mobile) {
 
 /**
  * Helper to safely extract and sanitize MSG91 credentials from environment.
- * Handles alternative variable names, accidental whitespace, or enclosing quotes.
+ * Handles alternative variable names, accidental whitespace, enclosing quotes, or accidental prefixes.
  */
 export function getMsg91Credentials() {
   const rawAuthKey =
@@ -93,17 +120,31 @@ export function getMsg91Credentials() {
   const clean = (val) =>
     String(val || '')
       .trim()
-      .replace(/^[\\"'`]+|[\\"'`]+$/g, '')
+      .replace(/^["'`\\]+|["'`\\]+$/g, '')
+      .replace(/\\r|\\n/g, '')
       .trim();
 
-  const authKey = clean(rawAuthKey);
-  const widgetId = clean(rawWidgetId);
+  let authKey = clean(rawAuthKey);
+  let widgetId = clean(rawWidgetId);
   let tokenAuth = clean(rawTokenAuth);
-  const templateId = clean(rawTemplateId);
+  let templateId = clean(rawTemplateId);
+
+  // Remove accidental variable name prefixes if pasted in key values
+  authKey = authKey.replace(/^(authkey|auth_key|msg91_auth_key)\s*[:=]\s*/i, '');
+  widgetId = widgetId.replace(/^(widgetid|widget_id|msg91_widget_id)\s*[:=]\s*/i, '');
+  tokenAuth = tokenAuth.replace(/^(tokenauth|token_auth|token)\s*[:=]\s*/i, '');
+  templateId = templateId.replace(/^(templateid|template_id)\s*[:=]\s*/i, '');
 
   // If authKey is formatted as a JWT (3 segments separated by dots), it is a widget tokenAuth
   if (!tokenAuth && authKey.split('.').length === 3) {
     tokenAuth = authKey;
+    authKey = ''; // Crucial: clear authKey so it is not sent as an invalid authkey header!
+  }
+
+  // If widgetId is formatted as a JWT, it was mistakenly pasted as widgetId
+  if (!tokenAuth && widgetId.split('.').length === 3) {
+    tokenAuth = widgetId;
+    widgetId = '';
   }
 
   return {
@@ -133,13 +174,30 @@ export function isMsg91Configured() {
  * Logs safe diagnostics without ever exposing secret values
  */
 export function logMsg91Diagnostics() {
-  const { authKey, widgetId, tokenAuth } = getMsg91Credentials();
+  const { authKey, widgetId, tokenAuth, templateId } = getMsg91Credentials();
   const isAuthConfigured = Boolean((authKey && authKey.length > 0) || (tokenAuth && tokenAuth.length > 0));
   const isWidgetConfigured = Boolean(widgetId && widgetId.length > 0);
 
-  console.log(`MSG91_AUTH_KEY configured: ${isAuthConfigured}`);
-  console.log(`MSG91_WIDGET_ID configured: ${isWidgetConfigured}`);
-  console.log(`MSG91 endpoint host: control.msg91.com`);
+  console.log(`[MSG91 Diagnostics] Auth configured: ${isAuthConfigured} (authKey length: ${authKey ? authKey.length : 0}, isJwt: ${Boolean(tokenAuth && !authKey)})`);
+  console.log(`[MSG91 Diagnostics] Widget configured: ${isWidgetConfigured} (widgetId length: ${widgetId ? widgetId.length : 0})`);
+  console.log(`[MSG91 Diagnostics] TokenAuth configured: ${Boolean(tokenAuth)} (length: ${tokenAuth ? tokenAuth.length : 0})`);
+  console.log(`[MSG91 Diagnostics] Template configured: ${Boolean(templateId)} (length: ${templateId ? templateId.length : 0})`);
+  console.log(`[MSG91 Diagnostics] Endpoint host: ${new URL(MSG91_WIDGET_BASE_URL).host}`);
+}
+
+/**
+ * Helper to safely sanitize error messages, ensuring credentials are never printed
+ */
+function safeSanitizeMessage(msg, authKey, tokenAuth) {
+  if (typeof msg !== 'string') return 'MSG91 request failed.';
+  let sanitized = msg;
+  if (authKey && authKey.length >= 8) {
+    sanitized = sanitized.replaceAll(authKey, '[REDACTED_AUTHKEY]');
+  }
+  if (tokenAuth && tokenAuth.length >= 8) {
+    sanitized = sanitized.replaceAll(tokenAuth, '[REDACTED_TOKEN]');
+  }
+  return sanitized;
 }
 
 /**
@@ -212,7 +270,7 @@ export async function sendOtp(mobileNumber) {
     const requestBody = {
       widgetId,
       identifier: formattedNumber,
-      ...(tokenAuth ? { tokenAuth } : {}),
+      ...(!authKey && tokenAuth ? { tokenAuth } : {}),
     };
 
     const response = await msg91Fetch(
@@ -237,8 +295,13 @@ export async function sendOtp(mobileNumber) {
       String(data.code || '200') === '200';
 
     if (!isSuccess) {
-      const errMsg =
-        data.message || data.error || (typeof data === 'string' ? data : 'Failed to send OTP via MSG91.');
+      const rawErrMsg =
+        data?.message || data?.error || (typeof data === 'string' ? data : 'Failed to send OTP via MSG91.');
+      const errMsg = safeSanitizeMessage(rawErrMsg, authKey, tokenAuth);
+
+      console.error(
+        `[MSG91 Error] sendOtp failed | HTTP ${response.status} | Code: ${data?.code || 'N/A'} | Type: ${data?.type || 'N/A'} | Message: "${errMsg}"`
+      );
 
       if (isRateLimitResponse(response.status, errMsg)) {
         throw new Msg91Error(RATE_LIMIT_MESSAGE, {
@@ -248,12 +311,24 @@ export async function sendOtp(mobileNumber) {
         });
       }
 
-      if (isAuthFailureResponse(data.code, errMsg)) {
-        console.error('[MSG91 Error] Authentication failure (code 201). Safe diagnostics:');
+      if (isIpRestrictionResponse(data?.code, errMsg)) {
+        console.error('[MSG91 Error] IP restriction detected. Render outbound IP is not in MSG91 Whitelisted IPs.');
+        logMsg91Diagnostics();
+        throw new Msg91Error('MSG91 IP security restriction: Server IP is not whitelisted in MSG91 dashboard.', {
+          statusCode: 502,
+          isAuthFailure: true,
+          isIpRestriction: true,
+          cause: new Error(errMsg),
+        });
+      }
+
+      if (isAuthFailureResponse(data?.code, errMsg)) {
+        console.error(`[MSG91 Error] Authentication failure (code: ${data?.code || 201}). Safe diagnostics:`);
         logMsg91Diagnostics();
         console.error('[MSG91 Error] Please verify:');
-        console.error(' 1. MSG91_AUTH_KEY and MSG91_WIDGET_ID in Render match your MSG91 dashboard.');
-        console.error(' 2. In MSG91 Dashboard -> Authkey Settings, verify IP whitelisting is not blocking Render outbound IPs.');
+        console.error(' 1. MSG91_AUTH_KEY in Render matches your active MSG91 Authkey (not a widget token or widget ID).');
+        console.error(' 2. MSG91_WIDGET_ID in Render matches your active published Widget ID.');
+        console.error(' 3. In MSG91 Dashboard -> Dev Tools / Authkey -> Settings -> Whitelisted IPs: Verify IP whitelisting is not blocking Render (disable IP restriction or whitelist Render IPs).');
         throw new Msg91Error('MSG91 authentication failure. Please check server SMS configuration.', {
           statusCode: 502,
           isAuthFailure: true,
@@ -360,7 +435,7 @@ export async function verifyOtp({ reqId, otp, mobileNumber }) {
       widgetId,
       reqId: String(reqId).trim(),
       otp: cleanOtp,
-      ...(tokenAuth ? { tokenAuth } : {}),
+      ...(!authKey && tokenAuth ? { tokenAuth } : {}),
     };
 
     const response = await msg91Fetch(
@@ -385,11 +460,16 @@ export async function verifyOtp({ reqId, otp, mobileNumber }) {
       String(data.code || '200') === '200';
 
     if (!isSuccess) {
-      const errMsg =
-        data.message || data.error || 'Invalid or expired OTP. Please check the code and try again.';
+      const rawErrMsg =
+        data?.message || data?.error || 'Invalid or expired OTP. Please check the code and try again.';
+      const errMsg = safeSanitizeMessage(rawErrMsg, authKey, tokenAuth);
 
-      if (isAuthFailureResponse(data.code, errMsg)) {
-        console.error('[MSG91 Error] Authentication failure on verifyOtp (code 201).');
+      console.error(
+        `[MSG91 Error] verifyOtp failed | HTTP ${response.status} | Code: ${data?.code || 'N/A'} | Type: ${data?.type || 'N/A'} | Message: "${errMsg}"`
+      );
+
+      if (isAuthFailureResponse(data?.code, errMsg)) {
+        console.error(`[MSG91 Error] Authentication failure on verifyOtp (code: ${data?.code || 201}).`);
         logMsg91Diagnostics();
         throw new Msg91Error('MSG91 authentication failure. Please check server SMS configuration.', {
           statusCode: 502,
@@ -472,8 +552,8 @@ export async function retryOtp({ reqId, mobileNumber, retryChannel = '11' }) {
     const requestBody = {
       widgetId,
       reqId: String(reqId).trim(),
-      retryChannel: String(retryChannel),
-      ...(tokenAuth ? { tokenAuth } : {}),
+      retryChannel: String(retryChannel || '11'),
+      ...(!authKey && tokenAuth ? { tokenAuth } : {}),
     };
 
     const response = await msg91Fetch(
@@ -498,7 +578,12 @@ export async function retryOtp({ reqId, mobileNumber, retryChannel = '11' }) {
       String(data.code || '200') === '200';
 
     if (!isSuccess) {
-      const errMsg = data.message || data.error || 'Failed to resend OTP. Please try again.';
+      const rawErrMsg = data?.message || data?.error || 'Failed to resend OTP. Please try again.';
+      const errMsg = safeSanitizeMessage(rawErrMsg, authKey, tokenAuth);
+
+      console.error(
+        `[MSG91 Error] retryOtp failed | HTTP ${response.status} | Code: ${data?.code || 'N/A'} | Type: ${data?.type || 'N/A'} | Message: "${errMsg}"`
+      );
 
       if (isRateLimitResponse(response.status, errMsg)) {
         throw new Msg91Error(RATE_LIMIT_MESSAGE, {
@@ -508,8 +593,8 @@ export async function retryOtp({ reqId, mobileNumber, retryChannel = '11' }) {
         });
       }
 
-      if (isAuthFailureResponse(data.code, errMsg)) {
-        console.error('[MSG91 Error] Authentication failure on retryOtp (code 201).');
+      if (isAuthFailureResponse(data?.code, errMsg)) {
+        console.error(`[MSG91 Error] Authentication failure on retryOtp (code: ${data?.code || 201}).`);
         logMsg91Diagnostics();
         throw new Msg91Error('MSG91 authentication failure. Please check server SMS configuration.', {
           statusCode: 502,

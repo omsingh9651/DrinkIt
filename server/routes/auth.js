@@ -5,6 +5,7 @@ import {
   verifyOtp,
   retryOtp,
   isMsg91Configured,
+  getMsg91Credentials,
   RATE_LIMIT_MESSAGE,
   isRateLimitResponse,
 } from '../services/msg91.js';
@@ -16,12 +17,26 @@ const router = Router();
 
 /**
  * GET /api/auth/status
- * Check if backend has MSG91 properly configured
+ * Check if backend has MSG91 properly configured with safe diagnostics
  */
 router.get('/status', (req, res) => {
+  const { authKey, widgetId, tokenAuth, templateId } = getMsg91Credentials();
   res.json({
     success: true,
     isConfigured: isMsg91Configured(),
+    provider: 'MSG91',
+    mode: widgetId ? 'widget' : (templateId ? 'template' : 'unconfigured'),
+    diagnostics: {
+      hasAuthKey: Boolean(authKey),
+      authKeyLength: authKey ? authKey.length : 0,
+      hasWidgetId: Boolean(widgetId),
+      widgetIdLength: widgetId ? widgetId.length : 0,
+      hasTokenAuth: Boolean(tokenAuth),
+      tokenAuthLength: tokenAuth ? tokenAuth.length : 0,
+      hasTemplateId: Boolean(templateId),
+      templateIdLength: templateId ? templateId.length : 0,
+      endpointHost: 'control.msg91.com',
+    },
   });
 });
 
@@ -80,16 +95,26 @@ router.post('/send-otp', otpSendLimiter, async (req, res) => {
       });
     }
 
+    if (err.isIpRestriction) {
+      return res.status(502).json({
+        success: false,
+        error: 'SMS service authentication error. Please verify server SMS settings or contact support.',
+        details: 'Server IP is not whitelisted in MSG91 dashboard (code 418/208). Disable IP whitelisting or allow Render outbound IPs.',
+      });
+    }
+
     if (err.isAuthFailure) {
       return res.status(502).json({
         success: false,
         error: 'SMS service authentication error. Please verify server SMS settings or contact support.',
+        details: err.cause?.message || 'MSG91 credentials rejected. Please verify MSG91_AUTH_KEY and MSG91_WIDGET_ID in Render.',
       });
     }
 
     return res.status(err.statusCode || 500).json({
       success: false,
       error: 'Failed to send OTP. Please try again later.',
+      details: err.message,
     });
   }
 });
@@ -184,12 +209,14 @@ router.post('/verify-otp', otpVerifyLimiter, async (req, res) => {
       return res.status(502).json({
         success: false,
         error: 'SMS service authentication error. Please contact support.',
+        details: err.cause?.message || 'MSG91 authentication failure during verification.',
       });
     }
 
     return res.status(err.statusCode || 400).json({
       success: false,
       error: 'Invalid or expired verification code. Please check the code and try again.',
+      details: err.message,
     });
   }
 });
@@ -235,16 +262,26 @@ router.post('/retry-otp', otpSendLimiter, async (req, res) => {
       });
     }
 
+    if (err.isIpRestriction) {
+      return res.status(502).json({
+        success: false,
+        error: 'SMS service authentication error. Please contact support.',
+        details: 'Server IP is not whitelisted in MSG91 dashboard (code 418/208). Disable IP whitelisting or allow Render outbound IPs.',
+      });
+    }
+
     if (err.isAuthFailure) {
       return res.status(502).json({
         success: false,
         error: 'SMS service authentication error. Please contact support.',
+        details: err.cause?.message || 'MSG91 credentials rejected during resend.',
       });
     }
 
     return res.status(err.statusCode || 500).json({
       success: false,
       error: 'Failed to resend OTP. Please try again later.',
+      details: err.message,
     });
   }
 });
